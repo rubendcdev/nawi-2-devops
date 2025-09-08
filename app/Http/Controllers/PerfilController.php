@@ -3,45 +3,53 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Taxista;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth; 
+use App\Models\User;
 
 class PerfilController extends Controller
 {
-    public function show()
+        public function show()
     {
-        $taxista = Auth::user(); // si tu login es con taxistas
-        return view('perfil.show', compact('taxista'));
+        $user = Auth::user();
+        return view('perfil.show', compact('user'));
     }
 
     public function edit()
     {
-        $taxista = Auth::user();
-        return view('perfil.edit', compact('taxista'));
+        $user = Auth::user(); 
+        return view('perfil.edit', compact('user'));
     }
 
     public function update(Request $request)
     {
-        $taxista = Auth::user();
+        $user = Auth::user();
 
         $request->validate([
-            'nombre' => 'required|string|max:100',
-            'apellidos' => 'required|string|max:100',
-            'num_telefono' => 'required|string|max:20',
-            'contrasena' => 'nullable|min:6'
+            'name' => 'required|string|max:255',
+            'telefono' => 'nullable|string|max:20',
+            'direccion' => 'nullable|string|max:255',
+            'licencia' => 'nullable|file|mimes:pdf,jpg,png,jpeg',
+            'password' => 'nullable|min:6',
         ]);
 
-        $data = $request->all();
+        $user->name = $request->name;
+        $user->telefono = $request->telefono;
+        $user->direccion = $request->direccion;
+        $user->activo = $request->activo;
 
-        if ($request->filled('contrasena')) {
-            $data['contrasena'] = Hash::make($request->contrasena);
-        } else {
-            unset($data['contrasena']);
+        
+        if ($request->hasFile('licencia')) {
+            $path = $request->file('licencia')->store('licencias', 'public');
+            $user->licencia = $path;
         }
 
-        $taxista->update($data);
+        
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->password);
+        }
 
-        return redirect()->route('perfil.show')->with('success', 'Perfil actualizado correctamente.');
+        $user->save();
+
+        return redirect()->route('perfil.show')->with('success', 'Perfil actualizado correctamente');
     }
 }

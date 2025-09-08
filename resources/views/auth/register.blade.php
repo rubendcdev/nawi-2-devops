@@ -120,19 +120,6 @@
 						<label>Confirmar contraseña</label>
 						<input type="password" name="password_confirmation" class="form-control" required>
 					</div>
-
-					<div class="form-group">
-						<label>Licencia de conducir</label>
-						<input type="file" name="licencia" class="form-control-file" required>
-						@error('licencia') <small class="text-danger">{{ $message }}</small> @enderror
-					</div>
-
-					<div class="form-group">
-						<label>Tarjeta de circulación</label>
-						<input type="file" name="tarjeta_circulacion" class="form-control-file" required>
-						@error('tarjeta_circulacion') <small class="text-danger">{{ $message }}</small> @enderror
-					</div>
-
 					<div class="form-check mb-3">
 						<input type="checkbox" name="terminos" class="form-check-input" required>
 						<label class="form-check-label">Acepto los términos y condiciones</label>
