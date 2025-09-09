@@ -9,22 +9,6 @@
                 <div class="card-header bg-dark text-white text-center">
                     <h3 class="mb-0">🚖 Panel de Usuario</h3>
                 </div>
-
-                <div class="card-body">
-                    <!-- Menú horizontal -->
-                    <ul class="nav nav-pills justify-content-center mb-4">
-                        <li class="nav-item mx-3">
-                            <a class="nav-link btn btn-lg btn-outline-primary" href="#">
-                                🚗 Vehículo
-                            </a>
-                        </li>
-                        <li class="nav-item mx-3">
-                            <a class="nav-link btn btn-lg btn-outline-success" href="#">
-                                👤 Datos Personales
-                            </a>
-                        </li>
-                    </ul>
-
                     <!-- Contenido principal -->
                     <div class="text-center">
                         <p class="fs-5 text-muted">

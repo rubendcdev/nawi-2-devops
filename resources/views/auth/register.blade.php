@@ -87,7 +87,7 @@
 					@csrf
 
 					<div class="form-group">
-						<label>Nombre completo</label>
+						<label>Nombre</label>
 						<input type="text" name="name" class="form-control" required>
 						@error('name') <small class="text-danger">{{ $message }}</small> @enderror
 					</div>
@@ -96,18 +96,6 @@
 						<label>Correo electrónico</label>
 						<input type="email" name="email" class="form-control" required>
 						@error('email') <small class="text-danger">{{ $message }}</small> @enderror
-					</div>
-
-					<div class="form-group">
-						<label>Teléfono</label>
-						<input type="text" name="telefono" class="form-control" required>
-						@error('telefono') <small class="text-danger">{{ $message }}</small> @enderror
-					</div>
-
-					<div class="form-group">
-						<label>Dirección</label>
-						<input type="text" name="direccion" class="form-control" required>
-						@error('direccion') <small class="text-danger">{{ $message }}</small> @enderror
 					</div>
 
 					<div class="form-group">
