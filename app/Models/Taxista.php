@@ -34,4 +34,14 @@ class Taxista extends Model
     protected $hidden = [
         'contrasena',
     ];
+
+    public function taxi()
+    {
+        return $this->belongsTo(Taxi::class);
+    }
+    public function carro() 
+    {
+        return $this->belongsTo(Taxi::class, 'id_carro', 'id_carro');
+    }
+
 }

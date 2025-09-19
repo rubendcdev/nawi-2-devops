@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\PaginaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PerfilController;
+use App\Http\Controllers\TaxistaController;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('welcome');
@@ -22,3 +25,6 @@ Route::middleware(['auth'])->group(function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/taxistas', [TaxistaController::class, 'index'])->name('taxistas.index');
+Route::get('/sobre-nosotros', [PaginaController::class, 'sobreNosotros'])->name('sobre-nosotros');
+
