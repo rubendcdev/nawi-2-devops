@@ -164,7 +164,7 @@
 
 <nav>
     <div class="nav-logo">
-        <img src="{{ asset('images/logo1.png') }}" alt="Logo Nawi">
+        <a href="/"><img src="{{ asset('images/logo1.png') }}" alt="Logo Nawi"></a>
     </div>
     <div class="nav-links">
         <a href="/taxistas">Taxistas</a>
