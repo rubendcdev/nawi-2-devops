@@ -25,3 +25,7 @@ Route::middleware(['auth'])->group(function () {
     })->middleware('auth')->name('datos-personales');
 
 });
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
