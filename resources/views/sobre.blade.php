@@ -103,35 +103,62 @@
         gap: 25px;
     }
 
+    /* --- TARJETAS FLIP --- */
     .card {
-        background: #fff;
+        perspective: 1000px;
+    }
+
+    .card-inner {
+        position: relative;
+        width: 100%;
+        height: 320px;
+        text-align: center;
+        transition: transform 0.8s;
+        transform-style: preserve-3d;
         border-radius: 15px;
         box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        overflow: hidden;
-        transition: transform 0.3s, box-shadow 0.3s;
     }
 
-    .card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+    .card:hover .card-inner {
+        transform: rotateY(180deg);
     }
 
-    .card img {
+    .card-front, .card-back {
+        position: absolute;
         width: 100%;
-        height: 250px;
+        height: 100%;
+        backface-visibility: hidden;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .card-front img {
+        width: 100%;
+        height: 100%;
         object-fit: cover;
-        border-bottom: 4px solid #ffc107;
+        border-radius: 15px;
     }
 
-    .card-body {
+    .card-back {
+        background: linear-gradient(135deg, #1a1a1a, #333);
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
         padding: 20px;
+        transform: rotateY(180deg);
     }
 
-    .card-body h2 {
-        font-size: 1.3rem;
-        margin-bottom: 5px;
-        color: #1a1a1a;
-        font-weight: 600;
+    .card-back h2 {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+        color: #ffc107;
+    }
+
+    .card-back p {
+        font-size: 0.95rem;
+        line-height: 1.5;
     }
 
     /* --- FOOTER --- */
@@ -157,6 +184,7 @@
     @media (max-width: 768px) {
         h1 { font-size: 2.2rem; }
         .intro-text { font-size: 1.1rem; text-align: center; }
+        .card-inner { height: 280px; }
     }
 </style>
 </head>
@@ -188,9 +216,15 @@
 
         @foreach($equipo as $miembro)
             <div class="card">
-                <img src="{{ $miembro['foto'] ?? 'https://via.placeholder.com/400x300' }}" alt="{{ $miembro['nombre'] }}">
-                <div class="card-body">
-                    <h2>{{ $miembro['nombre'] }}</h2>
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="{{ $miembro['foto'] ?? 'https://via.placeholder.com/400x300' }}" alt="{{ $miembro['nombre'] }}">
+                    </div>
+                    <div class="card-back">
+                        <h2>{{ $miembro['nombre'] }}</h2>
+                        <p>💡 Rol en el equipo: Desarrollador</p>
+                        <p>✨ Apasionado por la innovación y la tecnología.</p>
+                    </div>
                 </div>
             </div>
         @endforeach
