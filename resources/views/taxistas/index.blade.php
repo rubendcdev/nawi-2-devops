@@ -62,64 +62,86 @@
         font-size: 2.5rem;
     }
 
-    /* Tarjetas */
+    /* Grid */
     .grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
         gap: 20px;
     }
 
+    /* Card Flip */
     .card {
-        background-color: #fff;
-        border-radius: 12px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        overflow: hidden;
-        transition: 0.3s;
+        perspective: 1000px;
         cursor: pointer;
     }
 
-    .card:hover {
-        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    .card-inner {
+        position: relative;
+        width: 100%;
+        height: 350px;
+        transition: transform 0.8s;
+        transform-style: preserve-3d;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
-    .card img {
+    .card.flipped .card-inner {
+        transform: rotateY(180deg);
+    }
+
+    /* Caras */
+    .card-front, .card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #fff;
+    }
+
+    .card-front {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .card-front img {
         width: 100%;
         height: 200px;
         object-fit: cover;
     }
 
-    .card-body {
+    .card-front .card-body {
         padding: 15px;
+        text-align: center;
     }
 
-    .card-body h2 {
+    .card-front .card-body h2 {
         font-size: 1.25rem;
         margin-bottom: 8px;
     }
 
-    .card-body p {
-        color: #555;
-        font-size: 0.95rem;
-        margin-bottom: 4px;
+    .card-back {
+        transform: rotateY(180deg);
+        padding: 20px;
+        overflow-y: auto;
     }
 
-    .card-body hr {
+    .card-back h2 {
+        margin-bottom: 10px;
+    }
+
+    .card-back p {
+        margin-bottom: 6px;
+        font-size: 0.95rem;
+        color: #333;
+    }
+
+    .card-back hr {
         margin: 10px 0;
         border: 0;
         border-top: 1px solid #eee;
-    }
-
-    /* Sección oculta (Taxi) */
-    .card-extra {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.5s ease, padding 0.3s ease;
-        padding: 0 15px;
-    }
-
-    .card-extra.open {
-        max-height: 300px; /* ajusta según necesidad */
-        padding: 15px;
     }
 
     .toggle-btn {
@@ -150,7 +172,7 @@
 
 <nav>
     <div class="nav-logo">
-        <img src="{{ asset('images/logo1.png') }}" alt="Logo Nawi">
+        <a href="/"><img src="{{ asset('images/logo1.png') }}" alt="Logo Nawi"></a>
     </div>
     <div class="nav-links">
         <a href="#">Taxistas</a>
@@ -164,28 +186,35 @@
     <div class="grid">
         @foreach($taxistas as $taxista)
             <div class="card">
-               <img src="{{ asset($taxista->foto_conductor) }}" alt="Foto de {{ $taxista->nombre }}">
-                
-                <div class="card-body">
-                    <h2>{{ $taxista->nombre }} {{ $taxista->apellidos }}</h2>
-                    <p>Edad: {{ $taxista->edad }}</p>
-                    <p>Teléfono: {{ $taxista->num_telefono }}</p>
-                    <p>Estado: <strong>{{ ucfirst($taxista->estado) }}</strong></p>
-                    <p>Turno: {{ ucfirst($taxista->turno) }}</p>
+                <div class="card-inner">
+                    <!-- FRONT -->
+                    <div class="card-front">
+                        <img src="{{ asset('images/taxistas/'.$taxista->foto_conductor) }}" alt="Foto de {{ $taxista->nombre }}">
+                        <div class="card-body">
+                            <h2>{{ $taxista->nombre }} {{ $taxista->apellidos }}</h2>
+                            <p>Edad: {{ $taxista->edad }}</p>
+                            <span class="toggle-btn">Más información</span>
+                        </div>
+                    </div>
 
-                    <span class="toggle-btn">Ver Taxi</span>
-                </div>
-
-                <div class="card-extra">
-                    @if($taxista->carro)
-                        <h3>Taxi:</h3>
-                        <p>Marca: {{ $taxista->carro->marca }}</p>
-                        <p>Modelo: {{ $taxista->carro->modelo }}</p>
-                        <p>Placa: {{ $taxista->carro->placa }}</p>
-                        <p>Año: {{ $taxista->carro->anio }}</p>
-                    @else
-                        <p><em>Este taxista aún no tiene asignado un taxi.</em></p>
-                    @endif
+                    <!-- BACK -->
+                    <div class="card-back">
+                        <h2>{{ $taxista->nombre }} {{ $taxista->apellidos }}</h2>
+                        <p>Teléfono: {{ $taxista->num_telefono }}</p>
+                        <p>Estado: <strong>{{ ucfirst($taxista->estado) }}</strong></p>
+                        <p>Turno: {{ ucfirst($taxista->turno ?? 'Desconocido') }}</p>
+                        <hr>
+                        @if($taxista->carro)
+                            <h3>Taxi:</h3>
+                            <p>Marca: {{ $taxista->carro->marca }}</p>
+                            <p>Modelo: {{ $taxista->carro->modelo }}</p>
+                            <p>Placa: {{ $taxista->carro->placa }}</p>
+                            <p>Año: {{ $taxista->carro->anio }}</p>
+                        @else
+                            <p><em>Este taxista aún no tiene asignado un taxi.</em></p>
+                        @endif
+                        <span class="toggle-btn">Volver</span>
+                    </div>
                 </div>
             </div>
         @endforeach
@@ -197,13 +226,13 @@
 </footer>
 
 <script>
-    // Script para el acordeón de las tarjetas
-    document.querySelectorAll('.toggle-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Evita que se dispare si haces clic en toda la card
-            const extra = btn.closest('.card').querySelector('.card-extra');
-            extra.classList.toggle('open');
-            btn.textContent = extra.classList.contains('open') ? 'Ocultar Taxi' : 'Ver Taxi';
+    // Script para el flip de tarjetas
+    document.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            // Solo girar si se hace clic en el botón
+            if (e.target.classList.contains('toggle-btn')) {
+                card.classList.toggle('flipped');
+            }
         });
     });
 </script>
