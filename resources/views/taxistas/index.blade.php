@@ -193,7 +193,7 @@
                         <div class="card-body">
                             <h2>{{ $taxista->nombre }} {{ $taxista->apellidos }}</h2>
                             <p>Edad: {{ $taxista->edad }}</p>
-                            <span class="toggle-btn">Más información</span>
+                         
                         </div>
                     </div>
 
@@ -213,7 +213,6 @@
                         @else
                             <p><em>Este taxista aún no tiene asignado un taxi.</em></p>
                         @endif
-                        <span class="toggle-btn">Volver</span>
                     </div>
                 </div>
             </div>
@@ -230,9 +229,8 @@
     document.querySelectorAll('.card').forEach(card => {
         card.addEventListener('click', (e) => {
             // Solo girar si se hace clic en el botón
-            if (e.target.classList.contains('toggle-btn')) {
-                card.classList.toggle('flipped');
-            }
+            card.classList.toggle('flipped');
+        
         });
     });
 </script>
