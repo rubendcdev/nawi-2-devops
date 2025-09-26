@@ -28,7 +28,7 @@ class WebAuthController extends Controller
             'password' => 'required'
         ]);
 
-        $usuario = Usuario::where('email', $request->email)->first();
+        $usuario = Usuario::with('rol')->where('email', $request->email)->first();
 
         if (!$usuario || !Hash::check($request->password, $usuario->password)) {
             throw ValidationException::withMessages([
@@ -40,7 +40,9 @@ class WebAuthController extends Controller
         Auth::login($usuario);
 
         // Redirigir según el tipo de usuario
-        if ($usuario->taxista) {
+        if ($usuario->rol->nombre === 'admin') {
+            return redirect()->route('admin.dashboard');
+        } elseif ($usuario->taxista) {
             return redirect()->route('taxista.dashboard');
         } else {
             return redirect()->route('home');

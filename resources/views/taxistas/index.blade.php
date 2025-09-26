@@ -124,7 +124,7 @@
 </style>
 
 <div class="container">
-    <h1>Nuestros Taxistas</h1>
+    <h1>Taxistas Verificados</h1>
 
     <div class="grid">
         @forelse($taxistas as $taxista)
@@ -132,10 +132,15 @@
                 <div class="card-inner">
                     <!-- FRONT -->
                     <div class="card-front">
-                        <img src="{{ asset('images/taxistas/default.jpg') }}"
-                             alt="Foto de {{ $taxista->usuario->nombre }}">
+                        @if($taxista->usuario && $taxista->usuario->fotos && $taxista->usuario->fotos->count() > 0)
+                            <img src="{{ asset('uploads/fotos/' . $taxista->usuario->fotos->first()->url) }}"
+                                 alt="Foto de {{ $taxista->usuario->nombre ?? 'Taxista' }}">
+                        @else
+                            <img src="{{ asset('images/default-avatar.svg') }}"
+                                 alt="Foto de {{ $taxista->usuario->nombre ?? 'Taxista' }}">
+                        @endif
                         <div class="card-body">
-                            <h2>{{ $taxista->usuario->nombre }} {{ $taxista->usuario->apellido }}</h2>
+                            <h2>{{ $taxista->usuario->nombre ?? 'Sin nombre' }} {{ $taxista->usuario->apellido ?? '' }}</h2>
                             <p>Taxista Verificado</p>
                             <span class="toggle-btn">Más información</span>
                         </div>
@@ -143,21 +148,31 @@
 
                     <!-- BACK -->
                     <div class="card-back">
-                        <h2>{{ $taxista->usuario->nombre }} {{ $taxista->usuario->apellido }}</h2>
-                        <p>Teléfono: {{ $taxista->usuario->telefono }}</p>
-                        <p>Email: {{ $taxista->usuario->email }}</p>
+                        <h2>{{ $taxista->usuario->nombre ?? 'Sin nombre' }} {{ $taxista->usuario->apellido ?? '' }}</h2>
+                        <p>Teléfono: {{ $taxista->usuario->telefono ?? 'No disponible' }}</p>
+                        <p>Email: {{ $taxista->usuario->email ?? 'No disponible' }}</p>
                         <hr>
                         <h3>Documentos:</h3>
-                        @if($taxista->matricula)
+                        @if($taxista->matricula && $taxista->matricula->estatus)
                             <p>Matrícula: <strong>{{ ucfirst($taxista->matricula->estatus->nombre) }}</strong></p>
                         @else
                             <p>Matrícula: <em>Pendiente</em></p>
                         @endif
 
-                        @if($taxista->licencia)
+                        @if($taxista->licencia && $taxista->licencia->estatus)
                             <p>Licencia: <strong>{{ ucfirst($taxista->licencia->estatus->nombre) }}</strong></p>
                         @else
                             <p>Licencia: <em>Pendiente</em></p>
+                        @endif
+
+                        <hr>
+                        <h3>Vehículo:</h3>
+                        @if($taxista->taxis->count() > 0)
+                            <p>Marca: <strong>{{ $taxista->taxis->first()->marca }}</strong></p>
+                            <p>Modelo: <strong>{{ $taxista->taxis->first()->modelo }}</strong></p>
+                            <p>Número: <strong>#{{ $taxista->taxis->first()->numero_taxi }}</strong></p>
+                        @else
+                            <p>Vehículo: <em>No registrado</em></p>
                         @endif
                         <span class="toggle-btn">Volver</span>
                     </div>
@@ -165,8 +180,8 @@
             </div>
         @empty
             <div class="col-12 text-center">
-                <h3>No hay taxistas registrados aún</h3>
-                <p>Los taxistas aparecerán aquí una vez que se registren y suban sus documentos.</p>
+                <h3>No hay taxistas verificados aún</h3>
+                <p>Los taxistas aparecerán aquí una vez que sus documentos sean aprobados por el administrador.</p>
             </div>
         @endforelse
     </div>

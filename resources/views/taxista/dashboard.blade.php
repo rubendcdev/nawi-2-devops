@@ -1,5 +1,13 @@
 @extends('layouts.app')
 
+<style>
+        html, body {
+        background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+                    url('https://static.wixstatic.com/media/952b60_67f559efb50a4101804756294550c92a~mv2.jpg')
+                    no-repeat center center/cover;
+        color: #000;
+    }
+</style>
 @section('content')
 <div class="container">
     <div class="row">
@@ -22,10 +30,16 @@
                                 <div class="card-body text-center">
                                     <i class="fas fa-id-card fa-3x text-warning mb-3"></i>
                                     <h5>Matrícula</h5>
-                                    <p id="matricula-status" class="text-muted">No subida</p>
-                                    <button class="btn btn-warning" onclick="showMatriculaForm()">
-                                        <i class="fas fa-upload"></i> Subir Matrícula
-                                    </button>
+                                    @if($taxista && $taxista->matricula)
+                                        <p class="text-success">
+                                            <strong>{{ ucfirst($taxista->matricula->estatus->nombre) }}</strong>
+                                        </p>
+                                    @else
+                                        <p class="text-muted">No subida</p>
+                                    @endif
+                                    <a href="{{ route('taxista.documents') }}" class="btn btn-warning">
+                                        <i class="fas fa-upload"></i> Gestionar Documentos
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -35,19 +49,73 @@
                                 <div class="card-body text-center">
                                     <i class="fas fa-id-badge fa-3x text-warning mb-3"></i>
                                     <h5>Licencia</h5>
-                                    <p id="licencia-status" class="text-muted">No subida</p>
-                                    <button class="btn btn-warning" onclick="showLicenciaForm()">
-                                        <i class="fas fa-upload"></i> Subir Licencia
-                                    </button>
+                                    @if($taxista && $taxista->licencia)
+                                        <p class="text-success">
+                                            <strong>{{ ucfirst($taxista->licencia->estatus->nombre) }}</strong>
+                                        </p>
+                                    @else
+                                        <p class="text-muted">No subida</p>
+                                    @endif
+                                    <a href="{{ route('taxista.documents') }}" class="btn btn-warning">
+                                        <i class="fas fa-upload"></i> Gestionar Documentos
+                                    </a>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="mt-4">
+                        <h5>Gestión de Documentos</h5>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Importante:</strong> Debes subir tu matrícula y licencia para poder trabajar como taxista.
+                            <div class="mt-2">
+                                <a href="{{ route('taxista.documents') }}" class="btn btn-primary">
+                                    <i class="fas fa-file-upload"></i> Gestionar Documentos
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <h5>Gestión de Taxi</h5>
+                        <div class="alert alert-warning">
+                            <i class="fas fa-car"></i>
+                            <strong>Taxi:</strong> Registra la información de tu vehículo para completar tu perfil.
+                            <div class="mt-2">
+                    @if($taxista && $taxista->taxis->count() > 0)
+                        <a href="{{ route('taxi.edit', $taxista->taxis->first()->id) }}" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Editar Taxi
+                        </a>
+                    @else
+                        <a href="{{ route('taxi.create') }}" class="btn btn-success">
+                            <i class="fas fa-plus"></i> Registrar Taxi
+                        </a>
+                    @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <h5>Foto de Perfil</h5>
+                        <div class="alert alert-info">
+                            <i class="fas fa-camera"></i>
+                            <strong>Foto:</strong> Sube una foto de perfil para que los pasajeros te reconozcan.
+                            <div class="mt-2">
+                                <a href="{{ route('perfil.foto') }}" class="btn btn-primary">
+                                    <i class="fas fa-camera"></i> Gestionar Foto
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
                         <h5>Información del Taxista</h5>
-                        <div id="taxista-info" class="alert alert-info">
-                            <i class="fas fa-spinner fa-spin"></i> Cargando información...
+                        <div class="alert alert-info">
+                            <i class="fas fa-user"></i>
+                            <strong>Nombre:</strong> {{ auth()->user()->nombre }} {{ auth()->user()->apellido }}<br>
+                            <strong>Email:</strong> {{ auth()->user()->email }}<br>
+                            <strong>Teléfono:</strong> {{ auth()->user()->telefono }}
                         </div>
                     </div>
                 </div>
@@ -108,134 +176,4 @@
     </div>
 </div>
 
-<script>
-// Cargar información del taxista al cargar la página
-document.addEventListener('DOMContentLoaded', function() {
-    loadTaxistaInfo();
-    loadDocuments();
-});
-
-function loadTaxistaInfo() {
-    const token = localStorage.getItem('access_token');
-
-    fetch('/api/taxista/me', {
-        headers: {
-            'Authorization': 'Bearer ' + token,
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            const taxista = data.data;
-            document.getElementById('taxista-info').innerHTML = `
-                <strong>Nombre:</strong> ${taxista.usuario.nombre} ${taxista.usuario.apellido}<br>
-                <strong>Email:</strong> ${taxista.usuario.email}<br>
-                <strong>Teléfono:</strong> ${taxista.usuario.telefono}<br>
-                <strong>Rol:</strong> ${taxista.usuario.rol.nombre}
-            `;
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        document.getElementById('taxista-info').innerHTML = 'Error al cargar información';
-    });
-}
-
-function loadDocuments() {
-    const token = localStorage.getItem('access_token');
-
-    fetch('/api/taxista/documents', {
-        headers: {
-            'Authorization': 'Bearer ' + token,
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            const documents = data.data;
-
-            // Actualizar estado de matrícula
-            if (documents.matricula) {
-                document.getElementById('matricula-status').innerHTML =
-                    `<span class="badge bg-warning">${documents.matricula.estatus.nombre}</span>`;
-            }
-
-            // Actualizar estado de licencia
-            if (documents.licencia) {
-                document.getElementById('licencia-status').innerHTML =
-                    `<span class="badge bg-warning">${documents.licencia.estatus.nombre}</span>`;
-            }
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-}
-
-function showMatriculaForm() {
-    const modal = new bootstrap.Modal(document.getElementById('matriculaModal'));
-    modal.show();
-}
-
-function showLicenciaForm() {
-    const modal = new bootstrap.Modal(document.getElementById('licenciaModal'));
-    modal.show();
-}
-
-function uploadMatricula() {
-    const url = document.getElementById('matricula-url').value;
-    const token = localStorage.getItem('access_token');
-
-    fetch('/api/taxista/upload-matricula', {
-        method: 'POST',
-        headers: {
-            'Authorization': 'Bearer ' + token,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ url: url })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Matrícula subida exitosamente');
-            bootstrap.Modal.getInstance(document.getElementById('matriculaModal')).hide();
-            loadDocuments();
-        } else {
-            alert('Error: ' + data.message);
-        }
-    })
-    .catch(error => {
-        alert('Error al subir matrícula: ' + error.message);
-    });
-}
-
-function uploadLicencia() {
-    const url = document.getElementById('licencia-url').value;
-    const token = localStorage.getItem('access_token');
-
-    fetch('/api/taxista/upload-licencia', {
-        method: 'POST',
-        headers: {
-            'Authorization': 'Bearer ' + token,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ url: url })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Licencia subida exitosamente');
-            bootstrap.Modal.getInstance(document.getElementById('licenciaModal')).hide();
-            loadDocuments();
-        } else {
-            alert('Error: ' + data.message);
-        }
-    })
-    .catch(error => {
-        alert('Error al subir licencia: ' + error.message);
-    });
-}
-</script>
 @endsection

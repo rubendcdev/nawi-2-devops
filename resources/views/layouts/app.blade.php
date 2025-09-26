@@ -72,6 +72,11 @@
                 <a href="/">Inicio</a>
                 <a href="/taxistas">Taxistas</a>
                 <a href="/sobre-nosotros">Sobre Nosotros</a>
+                @auth
+                    @if(auth()->user()->rol->nombre === 'admin')
+                        <a href="/admin/dashboard">Admin</a>
+                    @endif
+                @endauth
             </div>
         </nav>
 

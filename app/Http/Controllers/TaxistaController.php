@@ -8,6 +8,7 @@ use App\Models\Licencia;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class TaxistaController extends Controller
 {
@@ -53,8 +54,7 @@ class TaxistaController extends Controller
     public function uploadMatricula(Request $request): JsonResponse
     {
         $request->validate([
-            'url' => 'required|string',
-            'id_estatus' => 'sometimes|string|exists:estatus_documentos,id'
+            'archivo' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120', // 5MB max
         ]);
 
         $user = auth()->user();
@@ -67,12 +67,17 @@ class TaxistaController extends Controller
             ], 404);
         }
 
+        // Subir archivo
+        $archivo = $request->file('archivo');
+        $nombreArchivo = time() . '_' . Str::random(10) . '.' . $archivo->getClientOriginalExtension();
+        $archivo->move(public_path('uploads/matriculas'), $nombreArchivo);
+
         // Crear matrícula
         $matricula = Matricula::create([
             'id' => Str::uuid(),
-            'url' => $request->url,
+            'url' => $nombreArchivo,
             'fecha_subida' => now(),
-            'id_estatus' => $request->id_estatus ?? '1' // pendiente por defecto
+            'id_estatus' => '1' // pendiente
         ]);
 
         // Actualizar taxista con la matrícula
@@ -91,8 +96,7 @@ class TaxistaController extends Controller
     public function uploadLicencia(Request $request): JsonResponse
     {
         $request->validate([
-            'url' => 'required|string',
-            'id_estatus' => 'sometimes|string|exists:estatus_documentos,id'
+            'archivo' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120', // 5MB max
         ]);
 
         $user = auth()->user();
@@ -105,12 +109,17 @@ class TaxistaController extends Controller
             ], 404);
         }
 
+        // Subir archivo
+        $archivo = $request->file('archivo');
+        $nombreArchivo = time() . '_' . Str::random(10) . '.' . $archivo->getClientOriginalExtension();
+        $archivo->move(public_path('uploads/licencias'), $nombreArchivo);
+
         // Crear licencia
         $licencia = Licencia::create([
             'id' => Str::uuid(),
-            'url' => $request->url,
+            'url' => $nombreArchivo,
             'fecha_subida' => now(),
-            'id_estatus' => $request->id_estatus ?? '1' // pendiente por defecto
+            'id_estatus' => '1' // pendiente
         ]);
 
         // Actualizar taxista con la licencia
@@ -154,7 +163,12 @@ class TaxistaController extends Controller
      */
     public function dashboard()
     {
-        return view('taxista.dashboard');
+        $user = auth()->user();
+        $taxista = Taxista::with(['matricula.estatus', 'licencia.estatus', 'taxis'])
+                          ->where('id_usuario', $user->id)
+                          ->first();
+
+        return view('taxista.dashboard', compact('taxista'));
     }
 
     /**
@@ -171,7 +185,7 @@ class TaxistaController extends Controller
     public function uploadMatriculaWeb(Request $request)
     {
         $request->validate([
-            'url' => 'required|string'
+            'archivo' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120', // 5MB max
         ]);
 
         $user = auth()->user();
@@ -181,10 +195,15 @@ class TaxistaController extends Controller
             return back()->with('error', 'Taxista no encontrado');
         }
 
+        // Subir archivo
+        $archivo = $request->file('archivo');
+        $nombreArchivo = time() . '_' . Str::random(10) . '.' . $archivo->getClientOriginalExtension();
+        $archivo->move(public_path('uploads/matriculas'), $nombreArchivo);
+
         // Crear matrícula
         $matricula = Matricula::create([
             'id' => Str::uuid(),
-            'url' => $request->url,
+            'url' => $nombreArchivo,
             'fecha_subida' => now(),
             'id_estatus' => '1' // pendiente
         ]);
@@ -201,7 +220,7 @@ class TaxistaController extends Controller
     public function uploadLicenciaWeb(Request $request)
     {
         $request->validate([
-            'url' => 'required|string'
+            'archivo' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120', // 5MB max
         ]);
 
         $user = auth()->user();
@@ -211,10 +230,15 @@ class TaxistaController extends Controller
             return back()->with('error', 'Taxista no encontrado');
         }
 
+        // Subir archivo
+        $archivo = $request->file('archivo');
+        $nombreArchivo = time() . '_' . Str::random(10) . '.' . $archivo->getClientOriginalExtension();
+        $archivo->move(public_path('uploads/licencias'), $nombreArchivo);
+
         // Crear licencia
         $licencia = Licencia::create([
             'id' => Str::uuid(),
-            'url' => $request->url,
+            'url' => $nombreArchivo,
             'fecha_subida' => now(),
             'id_estatus' => '1' // pendiente
         ]);
@@ -230,7 +254,25 @@ class TaxistaController extends Controller
      */
     public function index()
     {
-        $taxistas = Taxista::with(['usuario', 'matricula.estatus', 'licencia.estatus'])->get();
-        return view('taxistas.index', compact('taxistas'));
+        try {
+            $taxistas = Taxista::with([
+                'usuario.fotos',
+                'matricula.estatus',
+                'licencia.estatus',
+                'taxis'
+            ])
+            ->whereHas('matricula', function($query) {
+                $query->where('id_estatus', '2'); // aprobado
+            })
+            ->whereHas('licencia', function($query) {
+                $query->where('id_estatus', '2'); // aprobado
+            })
+            ->get();
+
+            return view('taxistas.index', compact('taxistas'));
+        } catch (\Exception $e) {
+            Log::error('Error al cargar taxistas: ' . $e->getMessage());
+            return view('taxistas.index', ['taxistas' => collect()]);
+        }
     }
 }

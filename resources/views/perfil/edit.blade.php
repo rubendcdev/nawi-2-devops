@@ -1,5 +1,12 @@
 @extends('layouts.app')
-
+<style>
+            body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://static.wixstatic.com/media/952b60_67f559efb50a4101804756294550c92a~mv2.jpg') no-repeat center center/cover;
+            color: #000;
+        }
+</style>
 @section('content')
 <div class="container">
     <h2>Editar Perfil</h2>

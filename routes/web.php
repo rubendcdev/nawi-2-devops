@@ -44,5 +44,27 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/taxista/documents', [TaxistaController::class, 'documents'])->name('taxista.documents');
     Route::post('/taxista/upload-matricula', [TaxistaController::class, 'uploadMatriculaWeb'])->name('taxista.upload.matricula');
     Route::post('/taxista/upload-licencia', [TaxistaController::class, 'uploadLicenciaWeb'])->name('taxista.upload.licencia');
+
+    // Rutas para gestión de taxis
+    Route::get('/taxi/create', [App\Http\Controllers\TaxiController::class, 'create'])->name('taxi.create');
+    Route::post('/taxi', [App\Http\Controllers\TaxiController::class, 'store'])->name('taxi.store');
+    Route::get('/taxi/{id}/edit', [App\Http\Controllers\TaxiController::class, 'edit'])->name('taxi.edit');
+    Route::put('/taxi/{id}', [App\Http\Controllers\TaxiController::class, 'update'])->name('taxi.update');
+
+    // Rutas para gestión de fotos
+    Route::get('/perfil/foto', function() { return view('perfil.foto'); })->name('perfil.foto');
+    Route::post('/foto/upload-perfil', [App\Http\Controllers\FotoController::class, 'uploadPerfil'])->name('foto.upload.perfil');
+    Route::post('/foto/eliminar-perfil', [App\Http\Controllers\FotoController::class, 'eliminarPerfil'])->name('foto.eliminar.perfil');
+    Route::get('/foto/{id}', [App\Http\Controllers\FotoController::class, 'verFoto'])->name('foto.ver');
+});
+
+// Rutas de administración
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/admin/documentos', [App\Http\Controllers\AdminController::class, 'documentos'])->name('admin.documentos');
+    Route::post('/admin/aprobar-documento', [App\Http\Controllers\AdminController::class, 'aprobarDocumento'])->name('admin.aprobar.documento');
+    Route::post('/admin/rechazar-documento', [App\Http\Controllers\AdminController::class, 'rechazarDocumento'])->name('admin.rechazar.documento');
+    Route::get('/admin/ver-documento/{tipo}/{id}', [App\Http\Controllers\AdminController::class, 'verDocumento'])->name('admin.ver.documento');
+    Route::get('/admin/descargar-documento/{tipo}/{id}', [App\Http\Controllers\AdminController::class, 'descargarDocumento'])->name('admin.descargar.documento');
 });
 

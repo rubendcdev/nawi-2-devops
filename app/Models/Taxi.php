@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Http\Controllers\TaxistaController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -10,10 +9,17 @@ class Taxi extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['placa', 'modelo', 'color'];
+    protected $table = 'taxis';
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
-    public function taxistas()
+    protected $fillable = [
+        'id', 'marca', 'modelo', 'numero_taxi', 'id_taxista'
+    ];
+
+    public function taxista()
     {
-        return $this->hasMany(TaxistaController::class);
+        return $this->belongsTo(Taxista::class, 'id_taxista');
     }
 }
