@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('generos', function (Blueprint $table) {
-            $table->id('id_genero');
-            $table->string('tipo', 45)->nullable();
-            $table->timestamps();
+        Schema::table('taxis', function (Blueprint $table) {
+            $table->integer('numero_taxi')->nullable()->after('modelo');
         });
     }
 
@@ -23,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('generos');
+        Schema::table('taxis', function (Blueprint $table) {
+            $table->dropColumn('numero_taxi');
+        });
     }
 };

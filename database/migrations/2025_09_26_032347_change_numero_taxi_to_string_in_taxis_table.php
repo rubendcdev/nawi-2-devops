@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('idiomas', function (Blueprint $table) {
-            $table->id('id_dioma');
-            $table->string('tipo', 45)->nullable();
-            $table->timestamps();
+        Schema::table('taxis', function (Blueprint $table) {
+            $table->string('numero_taxi', 10)->nullable()->change();
         });
     }
 
@@ -23,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('idiomas');
+        Schema::table('taxis', function (Blueprint $table) {
+            $table->integer('numero_taxi')->nullable()->change();
+        });
     }
 };

@@ -3,17 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pasajero;
+use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 class PasajeroController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index(): JsonResponse
     {
-        $pasajeros = Pasajero::with(['genero', 'idioma'])->get();
+        $pasajeros = Pasajero::with(['usuario.rol'])->get();
         return response()->json([
             'success' => true,
             'data' => $pasajeros
@@ -26,16 +32,7 @@ class PasajeroController extends Controller
     public function store(Request $request): JsonResponse
     {
         $request->validate([
-            'nombre' => 'required|string|max:100',
-            'apellidos' => 'required|string|max:100',
-            'ine' => 'nullable|string|max:255',
-            'foto' => 'nullable|string|max:255',
-            'correo' => 'required|email|max:105',
-            'num_telefono' => 'nullable|string|max:20',
-            'contrasena' => 'required|string|max:10',
-            'discapacidad' => 'nullable|boolean',
-            'id_genero' => 'required|exists:generos,id_genero',
-            'id_dioma' => 'required|exists:idiomas,id_dioma'
+            'id_usuario' => 'required|string|exists:usuarios,id'
         ]);
 
         $pasajero = Pasajero::create($request->all());
@@ -43,7 +40,7 @@ class PasajeroController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Pasajero creado exitosamente',
-            'data' => $pasajero->load(['genero', 'idioma'])
+            'data' => $pasajero->load(['usuario.rol'])
         ], 201);
     }
 
@@ -52,7 +49,7 @@ class PasajeroController extends Controller
      */
     public function show(string $id): JsonResponse
     {
-        $pasajero = Pasajero::with(['genero', 'idioma'])->find($id);
+        $pasajero = Pasajero::with(['usuario.rol'])->find($id);
 
         if (!$pasajero) {
             return response()->json([
@@ -73,16 +70,7 @@ class PasajeroController extends Controller
     public function update(Request $request, string $id): JsonResponse
     {
         $request->validate([
-            'nombre' => 'sometimes|required|string|max:100',
-            'apellidos' => 'sometimes|required|string|max:100',
-            'ine' => 'nullable|string|max:255',
-            'foto' => 'nullable|string|max:255',
-            'correo' => 'sometimes|required|email|max:105',
-            'num_telefono' => 'nullable|string|max:20',
-            'contrasena' => 'sometimes|required|string|max:10',
-            'discapacidad' => 'nullable|boolean',
-            'id_genero' => 'sometimes|required|exists:generos,id_genero',
-            'id_dioma' => 'sometimes|required|exists:idiomas,id_dioma'
+            'id_usuario' => 'sometimes|required|string|exists:usuarios,id'
         ]);
 
         $pasajero = Pasajero::find($id);
@@ -99,7 +87,7 @@ class PasajeroController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Pasajero actualizado exitosamente',
-            'data' => $pasajero->load(['genero', 'idioma'])
+            'data' => $pasajero->load(['usuario.rol'])
         ]);
     }
 
