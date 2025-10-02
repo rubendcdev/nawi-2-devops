@@ -27,9 +27,6 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/taxistas', [TaxistaController::class, 'index'])->name('taxistas.index');
-<<<<<<< HEAD
-Route::get('/sobre-nosotros', [PaginaController::class, 'sobreNosotros'])->name('sobre-nosotros');
-=======
 Route::get('/sobre-nosotros', [PaginaController::class, 'sobreNosotros'])->name('sobre-nosotros');
 
 // Rutas de autenticación web
@@ -70,5 +67,3 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/ver-documento/{tipo}/{id}', [App\Http\Controllers\AdminController::class, 'verDocumento'])->name('admin.ver.documento');
     Route::get('/admin/descargar-documento/{tipo}/{id}', [App\Http\Controllers\AdminController::class, 'descargarDocumento'])->name('admin.descargar.documento');
 });
-
->>>>>>> 99146fd4ebe8881e222fd03505d6005f0d2f4221
