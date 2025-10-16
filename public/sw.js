@@ -1,4 +1,4 @@
-const CACHE_NAME = 'nawi-v1';
+const CACHE_NAME = 'nawi-v2';
 const urlsToCache = [
   '/',
   '/offline.html',

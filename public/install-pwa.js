@@ -3,6 +3,7 @@ let deferredPrompt;
 
 // Detectar cuando el navegador puede instalar la PWA
 window.addEventListener('beforeinstallprompt', (e) => {
+    console.log('beforeinstallprompt event fired');
     // Prevenir que el navegador muestre automáticamente el prompt
     e.preventDefault();
     // Guardar el evento para usarlo más tarde
@@ -11,6 +12,13 @@ window.addEventListener('beforeinstallprompt', (e) => {
     // Mostrar botón de instalación personalizado
     showInstallButton();
 });
+
+// Detectar si la PWA ya está instalada
+if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+    console.log('PWA ya está instalada');
+} else {
+    console.log('PWA no está instalada, esperando beforeinstallprompt...');
+}
 
 // Función para mostrar el botón de instalación
 function showInstallButton() {
@@ -83,4 +91,5 @@ if (window.matchMedia('(display-mode: standalone)').matches) {
         installBtn.remove();
     }
 }
+
 

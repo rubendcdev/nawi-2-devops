@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAWI - Diagnóstico PWA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #4CAF50; }
+        .error { background: #f44336; }
+        .warning { background: #ff9800; }
+        .info { background: #2196F3; }
+        button {
+            background: #ffc107;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #ff9800; }
+        #install-btn {
+            display: none;
+            background: linear-gradient(45deg, #ffc107, #ff9800);
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚗 NAWI - Diagnóstico PWA</h1>
+
+    <div id="status-container">
+        <div class="status info">Verificando configuración...</div>
+    </div>
+
+    <button id="install-btn" onclick="installPWA()">📱 Instalar NAWI</button>
+
+    <h2>Información del Navegador</h2>
+    <div id="browser-info"></div>
+
+    <h2>Acciones</h2>
+    <button onclick="clearCache()">🗑️ Limpiar Cache</button>
+    <button onclick="unregisterSW()">🔄 Reiniciar Service Worker</button>
+    <button onclick="location.reload()">🔄 Recargar Página</button>
+
+    <script>
+        let deferredPrompt;
+
+        // Verificar estado de la PWA
+        function checkPWAStatus() {
+            const statusContainer = document.getElementById('status-container');
+            statusContainer.innerHTML = '';
+
+            // Verificar si está en modo standalone
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+            if (isStandalone) {
+                addStatus('success', '✅ PWA está instalada y ejecutándose en modo standalone');
+            } else {
+                addStatus('warning', '⚠️ PWA no está instalada');
+            }
+
+            // Verificar service worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistration().then(registration => {
+                    if (registration) {
+                        addStatus('success', '✅ Service Worker registrado');
+                        addStatus('info', `📋 Estado: ${registration.active ? 'Activo' : 'Inactivo'}`);
+                    } else {
+                        addStatus('error', '❌ Service Worker no registrado');
+                    }
+                });
+            } else {
+                addStatus('error', '❌ Service Worker no soportado');
+            }
+
+            // Verificar manifest
+            const manifestLink = document.querySelector('link[rel="manifest"]');
+            if (manifestLink) {
+                addStatus('success', '✅ Manifest encontrado');
+            } else {
+                addStatus('error', '❌ Manifest no encontrado');
+            }
+
+            // Verificar HTTPS
+            if (location.protocol === 'https:' || location.hostname === 'localhost') {
+                addStatus('success', '✅ Conexión segura (HTTPS/localhost)');
+            } else {
+                addStatus('error', '❌ Se requiere HTTPS para PWA en producción');
+            }
+        }
+
+        function addStatus(type, message) {
+            const statusContainer = document.getElementById('status-container');
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = message;
+            statusContainer.appendChild(div);
+        }
+
+        // Información del navegador
+        function showBrowserInfo() {
+            const browserInfo = document.getElementById('browser-info');
+            browserInfo.innerHTML = `
+                <p><strong>User Agent:</strong> ${navigator.userAgent}</p>
+                <p><strong>URL:</strong> ${location.href}</p>
+                <p><strong>Protocolo:</strong> ${location.protocol}</p>
+                <p><strong>Display Mode:</strong> ${window.matchMedia('(display-mode: standalone)').matches ? 'Standalone' : 'Browser'}</p>
+                <p><strong>Service Worker Support:</strong> ${'serviceWorker' in navigator ? 'Sí' : 'No'}</p>
+            `;
+        }
+
+        // Evento beforeinstallprompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            console.log('beforeinstallprompt event fired');
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('install-btn').style.display = 'block';
+            addStatus('success', '✅ PWA lista para instalar');
+        });
+
+        // Función de instalación
+        function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        addStatus('success', '✅ Usuario aceptó la instalación');
+                    } else {
+                        addStatus('warning', '⚠️ Usuario rechazó la instalación');
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        }
+
+        // Limpiar cache
+        function clearCache() {
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    names.forEach(name => {
+                        caches.delete(name);
+                    });
+                    addStatus('success', '✅ Cache limpiado');
+                });
+            }
+        }
+
+        // Reiniciar Service Worker
+        function unregisterSW() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(registrations => {
+                    registrations.forEach(registration => {
+                        registration.unregister();
+                    });
+                    addStatus('success', '✅ Service Workers desregistrados');
+                    setTimeout(() => location.reload(), 1000);
+                });
+            }
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', () => {
+            checkPWAStatus();
+            showBrowserInfo();
+        });
+    </script>
+</body>
+</html>

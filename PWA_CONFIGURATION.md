@@ -122,3 +122,4 @@ http://localhost/nawi-2/public/pwa-test.html
 
 La PWA está lista para ser instalada y usada! 🚗✨
 
+
