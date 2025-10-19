@@ -19,9 +19,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="NAWI">
-    <link rel="apple-touch-icon" href="{{ asset('images/logo192.png') }}">
-    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('images/logo192.png') }}">
-    <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('images/logo512.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/nawi-icon-192.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('images/nawi-icon-192.png') }}">
+    <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('images/nawi-icon-512.png') }}">
 
     <!-- Estilos -->
     <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet">
@@ -76,7 +76,7 @@
     <div id="app">
         <nav>
             <div class="nav-logo">
-                <a href="/"><img src="{{ asset('images/logo1.png') }}" alt="Logo Nawi"></a>
+                <a href="/"><img src="{{ asset('images/logoab.png') }}" alt="Logo Nawi"></a>
             </div>
             <div class="nav-links">
                 <a href="/">Inicio</a>

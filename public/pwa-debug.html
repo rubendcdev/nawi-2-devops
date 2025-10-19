@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NAWI - Diagnóstico PWA</title>
+    <title>Debug PWA - NAWI</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#ffc107">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,7 +13,35 @@
             margin: 0 auto;
             padding: 20px;
             background: #1a1a1a;
-            color: #fff;
+            color: white;
+        }
+        .debug-section {
+            background: #333;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .icon-test {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin: 10px 0;
+        }
+        .icon-test img {
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+        }
+        button {
+            background: #ffc107;
+            color: #1a1a1a;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #ffb300;
         }
         .status {
             padding: 10px;
@@ -21,164 +51,161 @@
         .success { background: #4CAF50; }
         .error { background: #f44336; }
         .warning { background: #ff9800; }
-        .info { background: #2196F3; }
-        button {
-            background: #ffc107;
-            color: #000;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 5px;
-        }
-        button:hover { background: #ff9800; }
-        #install-btn {
-            display: none;
-            background: linear-gradient(45deg, #ffc107, #ff9800);
-            padding: 15px 30px;
-            font-size: 16px;
-            font-weight: bold;
-        }
     </style>
 </head>
 <body>
-    <h1>🚗 NAWI - Diagnóstico PWA</h1>
+    <h1>🔧 Debug PWA - NAWI</h1>
 
-    <div id="status-container">
-        <div class="status info">Verificando configuración...</div>
+    <div class="debug-section">
+        <h2>📱 Estado del Service Worker</h2>
+        <div id="sw-status">Verificando...</div>
+        <button onclick="checkServiceWorker()">Verificar SW</button>
+        <button onclick="clearCache()">Limpiar Cache</button>
     </div>
 
-    <button id="install-btn" onclick="installPWA()">📱 Instalar NAWI</button>
+    <div class="debug-section">
+        <h2>🖼️ Iconos del Manifest</h2>
+        <div class="icon-test">
+            <img src="/images/logobuen(4).png" alt="Logo 96x96" width="96" height="96">
+            <span>96x96 (Shortcuts) - logobuen(4)</span>
+        </div>
+        <div class="icon-test">
+            <img src="/images/logobuen(1).png" alt="Logo 192x192" width="192" height="192">
+            <span>192x192 (Icono principal) - logobuen(1)</span>
+        </div>
+        <div class="icon-test">
+            <img src="/images/logobuen(2).png" alt="Logo 512x512" width="256" height="256">
+            <span>512x512 (Icono grande) - logobuen(2)</span>
+        </div>
+        <div class="icon-test">
+            <img src="/images/logobuen(3).png" alt="Logo 1280x720" width="320" height="180">
+            <span>1280x720 (Screenshot) - logobuen(3)</span>
+        </div>
+    </div>
 
-    <h2>Información del Navegador</h2>
-    <div id="browser-info"></div>
+    <div class="debug-section">
+        <h2>📋 Información del Manifest</h2>
+        <div id="manifest-info">Cargando...</div>
+        <button onclick="loadManifest()">Cargar Manifest</button>
+    </div>
 
-    <h2>Acciones</h2>
-    <button onclick="clearCache()">🗑️ Limpiar Cache</button>
-    <button onclick="unregisterSW()">🔄 Reiniciar Service Worker</button>
-    <button onclick="location.reload()">🔄 Recargar Página</button>
+    <div class="debug-section">
+        <h2>🗂️ Cache del Navegador</h2>
+        <div id="cache-info">Verificando...</div>
+        <button onclick="checkCache()">Verificar Cache</button>
+        <button onclick="clearAllCache()">Limpiar Todo</button>
+    </div>
+
+    <div class="debug-section">
+        <h2>🔄 Instrucciones de Actualización</h2>
+        <ol>
+            <li><strong>Limpiar Cache:</strong> Usa el botón "Limpiar Todo" arriba</li>
+            <li><strong>Recargar Página:</strong> Presiona Ctrl+F5 (forzar recarga)</li>
+            <li><strong>Verificar Iconos:</strong> Los iconos de arriba deben mostrar tus nuevas imágenes</li>
+            <li><strong>Reinstalar PWA:</strong> Si ya está instalada, desinstálala y vuelve a instalarla</li>
+        </ol>
+    </div>
 
     <script>
-        let deferredPrompt;
-
-        // Verificar estado de la PWA
-        function checkPWAStatus() {
-            const statusContainer = document.getElementById('status-container');
-            statusContainer.innerHTML = '';
-
-            // Verificar si está en modo standalone
-            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-
-            if (isStandalone) {
-                addStatus('success', '✅ PWA está instalada y ejecutándose en modo standalone');
-            } else {
-                addStatus('warning', '⚠️ PWA no está instalada');
-            }
-
-            // Verificar service worker
+        // Verificar Service Worker
+        function checkServiceWorker() {
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistration().then(registration => {
-                    if (registration) {
-                        addStatus('success', '✅ Service Worker registrado');
-                        addStatus('info', `📋 Estado: ${registration.active ? 'Activo' : 'Inactivo'}`);
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    if (registrations.length > 0) {
+                        document.getElementById('sw-status').innerHTML =
+                            '<div class="status success">✅ Service Worker activo (' + registrations.length + ' registros)</div>';
                     } else {
-                        addStatus('error', '❌ Service Worker no registrado');
+                        document.getElementById('sw-status').innerHTML =
+                            '<div class="status warning">⚠️ No hay Service Workers registrados</div>';
                     }
                 });
             } else {
-                addStatus('error', '❌ Service Worker no soportado');
-            }
-
-            // Verificar manifest
-            const manifestLink = document.querySelector('link[rel="manifest"]');
-            if (manifestLink) {
-                addStatus('success', '✅ Manifest encontrado');
-            } else {
-                addStatus('error', '❌ Manifest no encontrado');
-            }
-
-            // Verificar HTTPS
-            if (location.protocol === 'https:' || location.hostname === 'localhost') {
-                addStatus('success', '✅ Conexión segura (HTTPS/localhost)');
-            } else {
-                addStatus('error', '❌ Se requiere HTTPS para PWA en producción');
-            }
+                document.getElementById('sw-status').innerHTML =
+                    '<div class="status error">❌ Service Worker no soportado</div>';
         }
 
-        function addStatus(type, message) {
-            const statusContainer = document.getElementById('status-container');
-            const div = document.createElement('div');
-            div.className = `status ${type}`;
-            div.textContent = message;
-            statusContainer.appendChild(div);
-        }
-
-        // Información del navegador
-        function showBrowserInfo() {
-            const browserInfo = document.getElementById('browser-info');
-            browserInfo.innerHTML = `
-                <p><strong>User Agent:</strong> ${navigator.userAgent}</p>
-                <p><strong>URL:</strong> ${location.href}</p>
-                <p><strong>Protocolo:</strong> ${location.protocol}</p>
-                <p><strong>Display Mode:</strong> ${window.matchMedia('(display-mode: standalone)').matches ? 'Standalone' : 'Browser'}</p>
-                <p><strong>Service Worker Support:</strong> ${'serviceWorker' in navigator ? 'Sí' : 'No'}</p>
-            `;
-        }
-
-        // Evento beforeinstallprompt
-        window.addEventListener('beforeinstallprompt', (e) => {
-            console.log('beforeinstallprompt event fired');
-            e.preventDefault();
-            deferredPrompt = e;
-            document.getElementById('install-btn').style.display = 'block';
-            addStatus('success', '✅ PWA lista para instalar');
-        });
-
-        // Función de instalación
-        function installPWA() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        addStatus('success', '✅ Usuario aceptó la instalación');
-                    } else {
-                        addStatus('warning', '⚠️ Usuario rechazó la instalación');
-                    }
-                    deferredPrompt = null;
+        // Cargar información del manifest
+        function loadManifest() {
+            fetch('/manifest.json')
+                .then(response => response.json())
+                .then(manifest => {
+                    document.getElementById('manifest-info').innerHTML =
+                        '<div class="status success">✅ Manifest cargado correctamente</div>' +
+                        '<pre>' + JSON.stringify(manifest, null, 2) + '</pre>';
+                })
+                .catch(error => {
+                    document.getElementById('manifest-info').innerHTML =
+                        '<div class="status error">❌ Error cargando manifest: ' + error + '</div>';
                 });
-            }
         }
 
-        // Limpiar cache
-        function clearCache() {
+        // Verificar cache
+        function checkCache() {
             if ('caches' in window) {
-                caches.keys().then(names => {
-                    names.forEach(name => {
-                        caches.delete(name);
+                caches.keys().then(function(cacheNames) {
+                    let cacheInfo = '<div class="status success">✅ Cache disponible</div>';
+                    cacheInfo += '<ul>';
+                    cacheNames.forEach(cacheName => {
+                        cacheInfo += '<li>' + cacheName + '</li>';
                     });
-                    addStatus('success', '✅ Cache limpiado');
+                    cacheInfo += '</ul>';
+                    document.getElementById('cache-info').innerHTML = cacheInfo;
                 });
+            } else {
+                document.getElementById('cache-info').innerHTML =
+                    '<div class="status error">❌ Cache API no disponible</div>';
             }
         }
 
-        // Reiniciar Service Worker
-        function unregisterSW() {
+        // Limpiar cache específico
+        function clearCache() {
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistrations().then(registrations => {
-                    registrations.forEach(registration => {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for(let registration of registrations) {
                         registration.unregister();
-                    });
-                    addStatus('success', '✅ Service Workers desregistrados');
-                    setTimeout(() => location.reload(), 1000);
+                    }
+                    document.getElementById('sw-status').innerHTML =
+                        '<div class="status success">✅ Service Workers desregistrados</div>';
                 });
             }
         }
 
-        // Inicializar
-        document.addEventListener('DOMContentLoaded', () => {
-            checkPWAStatus();
-            showBrowserInfo();
-        });
+        // Limpiar todo el cache
+        function clearAllCache() {
+            if ('caches' in window) {
+                caches.keys().then(function(cacheNames) {
+                    return Promise.all(
+                        cacheNames.map(function(cacheName) {
+                            return caches.delete(cacheName);
+                        })
+                    );
+                }).then(function() {
+                    document.getElementById('cache-info').innerHTML =
+                        '<div class="status success">✅ Todo el cache limpiado</div>';
+
+                    // También limpiar service workers
+                    if ('serviceWorker' in navigator) {
+                        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                            for(let registration of registrations) {
+                                registration.unregister();
+                            }
+                        });
+                    }
+
+                    // Recargar página después de 2 segundos
+                    setTimeout(function() {
+                        window.location.reload(true);
+                    }, 2000);
+                });
+            }
+        }
+
+        // Ejecutar verificaciones al cargar
+        window.onload = function() {
+            checkServiceWorker();
+            loadManifest();
+            checkCache();
+        };
     </script>
 </body>
 </html>

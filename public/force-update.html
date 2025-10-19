@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forzar Actualización PWA - NAWI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .step {
+            background: #333;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+        }
+        button {
+            background: #ffc107;
+            color: #1a1a1a;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #ffb300;
+        }
+        .danger {
+            background: #f44336;
+            color: white;
+        }
+        .danger:hover {
+            background: #d32f2f;
+        }
+        .success {
+            background: #4CAF50;
+            color: white;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .loading {
+            background: #ff9800;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔄 Forzar Actualización PWA</h1>
+
+    <div class="step">
+        <h2>⚠️ IMPORTANTE: Desinstala la PWA primero</h2>
+        <p>Antes de continuar, desinstala la PWA actual:</p>
+        <ul>
+            <li><strong>Windows:</strong> Panel de Control → Programas → NAWI → Desinstalar</li>
+            <li><strong>Android:</strong> Configuración → Apps → NAWI → Desinstalar</li>
+            <li><strong>iOS:</strong> Mantener icono → "Quitar app"</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <h2>🧹 Paso 1: Limpiar Cache Completo</h2>
+        <button onclick="clearEverything()" class="danger">🗑️ LIMPIAR TODO EL CACHE</button>
+        <div id="clear-status"></div>
+    </div>
+
+    <div class="step">
+        <h2>🔄 Paso 2: Forzar Actualización</h2>
+        <button onclick="forceUpdate()" class="success">🔄 FORZAR ACTUALIZACIÓN</button>
+        <div id="update-status"></div>
+    </div>
+
+    <div class="step">
+        <h2>📱 Paso 3: Reinstalar PWA</h2>
+        <p>Después de limpiar, ve a: <a href="/" style="color: #ffc107;">http://localhost/nawi-2</a></p>
+        <p>Busca el icono de instalación en la barra de direcciones</p>
+    </div>
+
+    <div class="step">
+        <h2>✅ Verificar Imágenes</h2>
+        <p>Las nuevas imágenes deberían ser:</p>
+        <ul>
+            <li>Icono principal: <code>logobuen(1).png</code></li>
+            <li>Icono grande: <code>logobuen(2).png</code></li>
+            <li>Screenshot: <code>logobuen(3).png</code></li>
+            <li>Shortcuts: <code>logobuen(4).png</code></li>
+        </ul>
+    </div>
+
+    <script>
+        function clearEverything() {
+            document.getElementById('clear-status').innerHTML =
+                '<div class="status loading">🔄 Limpiando cache...</div>';
+
+            // Limpiar todos los caches
+            if ('caches' in window) {
+                caches.keys().then(function(cacheNames) {
+                    return Promise.all(
+                        cacheNames.map(function(cacheName) {
+                            console.log('Eliminando cache:', cacheName);
+                            return caches.delete(cacheName);
+                        })
+                    );
+                }).then(function() {
+                    // Desregistrar todos los service workers
+                    if ('serviceWorker' in navigator) {
+                        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                            registrations.forEach(function(registration) {
+                                registration.unregister();
+                                console.log('Service worker desregistrado');
+                            });
+                        });
+                    }
+
+                    // Limpiar localStorage y sessionStorage
+                    localStorage.clear();
+                    sessionStorage.clear();
+
+                    document.getElementById('clear-status').innerHTML =
+                        '<div class="status success">✅ Cache limpiado completamente</div>';
+                });
+            } else {
+                document.getElementById('clear-status').innerHTML =
+                    '<div class="status success">✅ Cache API no disponible (ya limpio)</div>';
+            }
+        }
+
+        function forceUpdate() {
+            document.getElementById('update-status').innerHTML =
+                '<div class="status loading">🔄 Forzando actualización...</div>';
+
+            // Recargar con cache bypass
+            setTimeout(function() {
+                window.location.reload(true);
+            }, 1000);
+        }
+
+        // Auto-ejecutar limpieza al cargar
+        window.onload = function() {
+            console.log('Página de fuerza actualización cargada');
+        };
+    </script>
+</body>
+</html>

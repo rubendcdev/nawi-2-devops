@@ -1,10 +1,11 @@
-const CACHE_NAME = 'nawi-v2';
+const CACHE_NAME = 'nawi-v6';
 const urlsToCache = [
   '/',
   '/offline.html',
   '/css/dashboard.css',
-  '/images/logo1.png',
-  '/images/logo2.jpg',
+  '/images/nawi-icon-192.png',
+  '/images/nawi-icon-512.png',
+  '/images/nawi-icon-96.png',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css',
   'https://fonts.bunny.net/css?family=Nunito'
 ];
@@ -32,6 +33,9 @@ self.addEventListener('activate', function(event) {
           }
         })
       );
+    }).then(function() {
+      // Forzar actualización inmediata
+      return self.clients.claim();
     })
   );
 });
