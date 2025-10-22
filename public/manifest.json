@@ -27,7 +27,7 @@
   ],
   "screenshots": [
     {
-      "src": "/images/logobuen(3).png?v=20241216",
+      "src": "/images/logobuen(3).png",
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide"
@@ -58,8 +58,7 @@
         }
       ]
     }
-  ]
+  ],
+  "id": "nawi-taxi-ocosingo",
+  "prefer_related_applications": false
 }
-
-
-
