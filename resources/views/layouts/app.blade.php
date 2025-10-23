@@ -13,9 +13,19 @@
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
+    <!-- PWA Configuration -->
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <meta name="theme-color" content="#ffc107">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="NAWI">
+    <link rel="apple-touch-icon" href="{{ asset('images/logo192.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('images/logo192.png') }}">
+    <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('images/logo512.png') }}">
+
     <!-- Estilos -->
     <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 
 <style>
@@ -49,23 +59,12 @@
         font-weight: bold;
         margin: 0 15px;
         transition: color 0.3s, transform 0.2s, text-shadow 0.3s;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 12px;
-        border-radius: 8px;
-        background: transparent;
     }
 
     nav .nav-links a:hover {
         color: #ffc107; /* hover amarillo */
         transform: translateY(-2px);
         text-shadow: 0 0 8px rgba(255, 193, 7, 0.8); /* glow en hover */
-        background: transparent;
-    }
-
-    nav .nav-links a i {
-        font-size: 14px;
     }
 </style>
 
@@ -77,62 +76,16 @@
     <div id="app">
         <nav>
             <div class="nav-logo">
-                <a href="/"><img src="{{ asset('images/logo1.png') }}" alt="Logo Nawi"></a>
+                <a href="/"><img src="{{ asset('images/logoab.png') }}" alt="Logo Nawi"></a>
             </div>
             <div class="nav-links">
+                <a href="/">Inicio</a>
+                <a href="/taxistas">Taxistas</a>
+                <a href="/sobre-nosotros">Sobre Nosotros</a>
                 @auth
-                    {{-- Usuario autenticado --}}
                     @if(auth()->user()->rol->nombre === 'admin')
-                        {{-- Menú para Admin --}}
-                        <a href="/admin/dashboard">
-                            <i class="fas fa-tachometer-alt"></i> Dashboard
-                        </a>
-                        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                        </a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                            @csrf
-                        </form>
-                    @elseif(auth()->user()->taxista)
-                        {{-- Menú para Taxista --}}
-                        <a href="/taxista/dashboard">
-                            <i class="fas fa-taxi"></i> Mi Panel
-                        </a>
-                        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                        </a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                            @csrf
-                        </form>
-                    @else
-                        {{-- Menú para Pasajero --}}
-                        <a href="/home">
-                            <i class="fas fa-home"></i> Inicio
-                        </a>
-                        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                        </a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                            @csrf
-                        </form>
+                        <a href="/admin/dashboard">Admin</a>
                     @endif
-                @else
-                    {{-- Usuario no autenticado --}}
-                    <a href="/">
-                        <i class="fas fa-home"></i> Inicio
-                    </a>
-                    <a href="/taxistas">
-                        <i class="fas fa-taxi"></i> Taxistas
-                    </a>
-                    <a href="/sobre-nosotros">
-                        <i class="fas fa-info-circle"></i> Sobre Nosotros
-                    </a>
-                    <a href="/login">
-                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-                    </a>
-                    <a href="/register/taxista">
-                        <i class="fas fa-user-plus"></i> Registrarse
-                    </a>
                 @endauth
             </div>
         </nav>
@@ -142,18 +95,24 @@
         </main>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-<script>
-    // Inicializar AOS cuando el DOM esté listo
-    document.addEventListener('DOMContentLoaded', function() {
-        AOS.init({
-            once: true,
-            duration: 1000,
-            easing: 'ease-in-out',
-            offset: 100,
-            delay: 0
-        });
-    });
-</script>
+    <script src="{{ asset('install-pwa.js') }}"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(function(err) {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+
+        AOS.init({ once: true });
+    </script>
 
 </body>
 </html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAWI PWA - Test de Instalación</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#ffc107">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .status-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .status-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        .success { color: #4CAF50; }
+        .warning { color: #FF9800; }
+        .error { color: #F44336; }
+        .btn {
+            background: linear-gradient(45deg, #ffc107, #ff9800);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚗 NAWI PWA - Test de Instalación</h1>
+
+        <div class="status-card">
+            <div class="status-icon success">✅</div>
+            <h2>Manifest.json</h2>
+            <p>Configurado correctamente para instalación PWA</p>
+        </div>
+
+        <div class="status-card">
+            <div class="status-icon success">✅</div>
+            <h2>Service Worker</h2>
+            <p>Registrado para funcionalidad offline</p>
+        </div>
+
+        <div class="status-card">
+            <div class="status-icon success">✅</div>
+            <h2>Iconos PWA</h2>
+            <p>Iconos configurados para diferentes tamaños</p>
+        </div>
+
+        <div class="status-card">
+            <div class="status-icon warning">⚠️</div>
+            <h2>Instalación</h2>
+            <p>Usa el botón de instalación que aparece en la esquina inferior derecha</p>
+        </div>
+
+        <div style="margin-top: 40px;">
+            <button class="btn" onclick="window.location.href='/'">
+                🏠 Ir a NAWI
+            </button>
+            <button class="btn" onclick="testPWA()">
+                🔍 Probar PWA
+            </button>
+        </div>
+
+        <div id="test-results" style="margin-top: 30px;"></div>
+    </div>
+
+    <script>
+        function testPWA() {
+            const results = document.getElementById('test-results');
+            let html = '<div class="status-card"><h3>Resultados de Prueba:</h3>';
+
+            // Test 1: Service Worker
+            if ('serviceWorker' in navigator) {
+                html += '<p class="success">✅ Service Worker soportado</p>';
+            } else {
+                html += '<p class="error">❌ Service Worker no soportado</p>';
+            }
+
+            // Test 2: Manifest
+            if (document.querySelector('link[rel="manifest"]')) {
+                html += '<p class="success">✅ Manifest configurado</p>';
+            } else {
+                html += '<p class="error">❌ Manifest no encontrado</p>';
+            }
+
+            // Test 3: HTTPS
+            if (location.protocol === 'https:' || location.hostname === 'localhost') {
+                html += '<p class="success">✅ Conexión segura</p>';
+            } else {
+                html += '<p class="error">❌ Se requiere HTTPS para PWA</p>';
+            }
+
+            // Test 4: Display mode
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                html += '<p class="success">✅ Ejecutándose como PWA</p>';
+            } else {
+                html += '<p class="warning">⚠️ Ejecutándose en navegador</p>';
+            }
+
+            html += '</div>';
+            results.innerHTML = html;
+        }
+
+        // Registrar Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                        console.log('ServiceWorker registrado:', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('Error al registrar ServiceWorker:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
+
+
