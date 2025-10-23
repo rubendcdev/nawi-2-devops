@@ -19,9 +19,14 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="NAWI">
-    <link rel="apple-touch-icon" href="{{ asset('images/logo192.png') }}">
-    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('images/logo192.png') }}">
-    <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('images/logo512.png') }}">
+    <!-- Favicon Configuration -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/nawi-icon-192.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/nawi-icon-192.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('images/nawi-icon-192.png') }}">
+    <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('images/nawi-icon-512.png') }}">
+    <link rel="shortcut icon" href="{{ asset('images/nawi-icon-192.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/nawi-icon-192.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/nawi-icon-192.png') }}">
 
     <!-- Estilos -->
     <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet">
