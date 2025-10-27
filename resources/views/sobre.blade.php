@@ -35,18 +35,47 @@
     }
 
     h1 {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 6px #000;
-            text-align: center;
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-align: center;
+        color: #000000;
+        text-shadow: 
+            0 0 5px #e18222ff,
+            0 0 10px #e18222ff,
+            0 0 15px #e18222ff,
+            0 0 20px #e18222ff,
+            0 0 25px #e18222ff,
+            2px 2px 4px rgba(255,255,255,0.3);
+        animation: neonGlow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes neonGlow {
+        from {
+            text-shadow: 
+                0 0 5px #efad6bff,
+                0 0 10px #efad6bff,
+                0 0 15px #efad6bff,
+                0 0 20px #efad6bff,
+                0 0 25px #efad6bff,
+                2px 2px 4px rgba(255,255,255,0.3);
         }
+        to {
+            text-shadow: 
+                0 0 10px #fbdb5bff,
+                0 0 20px #fbdb5bff,
+                0 0 30px #fbdb5bff,
+                0 0 40px #fbdb5bff,
+                0 0 50px #fbdb5bff,
+                2px 2px 4px rgba(255,255,255,0.5);
+        }
+    }
 
     .intro-text {
         text-align: center;
         font-size: 1.3rem;
         font-weight: 500;
-        background: linear-gradient(90deg, #41a001, #c7bc3b);
+        background: linear-gradient(90deg, #ffc107, #e18222ff);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         margin-bottom: 50px;
@@ -98,6 +127,12 @@
         overflow: hidden;
     }
 
+    .card-front {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
     .card-front img {
         width: 100%;
         height: 100%;
@@ -106,7 +141,8 @@
     }
 
     .card-back {
-        background: linear-gradient(135deg, #1a1a1a, #333);
+        background: rgba(26, 26, 26, 0.8);
+        backdrop-filter: blur(10px);
         color: #fff;
         display: flex;
         flex-direction: column;
@@ -114,6 +150,7 @@
         align-items: center;
         padding: 20px;
         transform: rotateY(180deg);
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .card-back h2 {
@@ -127,20 +164,111 @@
         line-height: 1.5;
     }
 
-    /* --- FOOTER --- */
+    /* --- FOOTER CON FONDO DE CARRETERA --- */
     footer {
-        background-color: #1a1a1a;
+        background: 
+            /* Asfalto base */
+            linear-gradient(180deg, #2c2c2c 0%, #1a1a1a 50%, #0f0f0f 100%),
+            /* Líneas de carretera */
+            repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                transparent 45px,
+                #ffcc00ff 45px,
+                #ffcc00ff 55px,
+                transparent 55px,
+                transparent 100px
+            ),
+            /* Efectos de desgaste del asfalto */
+            radial-gradient(ellipse at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
+            radial-gradient(ellipse at 80% 30%, rgba(255,255,255,0.05) 0%, transparent 40%),
+            /* Textura de asfalto */
+            repeating-linear-gradient(
+                45deg,
+                transparent 0px,
+                transparent 2px,
+                rgba(255,255,255,0.02) 2px,
+                rgba(255,255,255,0.02) 4px
+            );
         color: #fff;
         text-align: center;
-        padding: 20px;
+        padding: 30px 20px;
         font-size: 0.95rem;
         letter-spacing: 1px;
         margin-top: 40px;
-        border-radius: 8px;
+        border-radius: 0;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 
+            0 -5px 15px rgba(0,0,0,0.3),
+            inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+
+    /* Efectos adicionales de carretera */
+    footer::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, 
+            transparent 0%, 
+            #ff9900ff 20%, 
+            #ff9900ff 30%, 
+            transparent 50%,
+            #ff9900ff 70%,
+            #ff9900ff 80%,
+            transparent 100%
+        );
+        animation: roadLine 3s linear infinite;
+    }
+
+    footer::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, 
+            #ff6b6b 0%, 
+            #ff6b6b 10%, 
+            transparent 10%, 
+            transparent 20%,
+            #ff6b6b 20%,
+            #ff6b6b 30%,
+            transparent 30%
+        );
+        opacity: 0.7;
+    }
+
+    @keyframes roadLine {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
     }
 
     footer p {
-        margin: 5px 0;
+        margin: 8px 0;
+        position: relative;
+        z-index: 2;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+
+    /* Efecto de luces de neón en el texto */
+    footer p:first-child {
+        color: #ffcc00ff;
+        text-shadow: 
+            0 0 5px #ffcc00ff,
+            0 0 10px #ffcc00ff,
+            0 0 15px #ffcc00ff,
+            0 1px 3px rgba(0,0,0,0.8);
+        font-weight: 600;
+    }
+
+    footer p:last-child {
+        color: #cccccc;
+        font-size: 0.85rem;
     }
 
     /* --- ANIMACIONES --- */
