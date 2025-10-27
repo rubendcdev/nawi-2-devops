@@ -382,6 +382,11 @@
                                  alt="Foto de {{ $taxista->usuario->nombre ?? 'Taxista' }}">
                         @endif
                         <div class="card-body">
+<<<<<<< HEAD
+                            <h2>{{ $taxista->nombre }} {{ $taxista->apellidos }}</h2>
+                            <p>Edad: {{ $taxista->edad }}</p>
+                         
+=======
                             <h2>{{ $taxista->usuario->nombre ?? 'Sin nombre' }} {{ $taxista->usuario->apellido ?? '' }}</h2>
                             <div class="status">✅ Verificado</div>
                             <span class="toggle-btn">Ver información</span>
@@ -460,9 +465,15 @@
     // Script para el flip de tarjetas
     document.querySelectorAll('.card').forEach(card => {
         card.addEventListener('click', (e) => {
+<<<<<<< HEAD
+            // Solo girar si se hace clic en el botón
+            card.classList.toggle('flipped');
+        
+=======
             if (e.target.classList.contains('toggle-btn')) {
                 card.classList.toggle('flipped');
             }
+>>>>>>> 99146fd4ebe8881e222fd03505d6005f0d2f4221
         });
     });
 </script>

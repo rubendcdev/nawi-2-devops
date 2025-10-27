@@ -14,98 +14,123 @@
         @csrf
         @method('PUT')
 
+        {{-- Nombre (solo lectura) --}}
         <div class="mb-3">
             <label>Nombre</label>
-            <input type="text" name="nombre" class="form-control" value="{{ $taxista->nombre }}">
+            <input type="text" class="form-control" value="{{ $user->name }}" disabled>
         </div>
 
+        {{-- Correo (solo lectura) --}}
+        <div class="mb-3">
+            <label>Correo</label>
+            <input type="email" class="form-control" 
+                   value="{{ $user->email }}" disabled>
+        </div>
+
+        {{-- Apellidos --}}
         <div class="mb-3">
             <label>Apellidos</label>
-            <input type="text" name="apellidos" class="form-control" value="{{ $taxista->apellidos }}">
+            <input type="text" name="apellidos" class="form-control" 
+                   value="{{ old('apellidos', $user->apellidos) }}">
         </div>
 
+        {{-- Edad --}}
         <div class="mb-3">
             <label>Edad</label>
-            <input type="number" name="edad" class="form-control" value="{{ $taxista->edad }}">
+            <input type="number" name="edad" class="form-control" 
+                   value="{{ old('edad', $user->edad) }}">
         </div>
 
+        {{-- INE --}}
         <div class="mb-3">
             <label>INE</label>
-            <input type="text" name="ine" class="form-control" value="{{ $taxista->ine }}">
+            <input type="text" name="ine" class="form-control" 
+                   value="{{ old('ine', $user->ine) }}">
         </div>
 
+        {{-- Permiso de Circulación --}}
         <div class="mb-3">
-            <label>Permiso</label>
-            <input type="text" name="permiso" class="form-control" value="{{ $taxista->permiso }}">
+            <label>permiso (Archivo)</label>
+            <input type="file" name="permiso" class="form-control">
+            @if(!empty($user->permiso))
+                <small class="text-muted">
+                    Archivo actual: {{ basename($user->permiso) }}
+                </small>
+            @endif
         </div>
 
-        <div class="mb-3">
-            <label>Licencia</label>
-            <input type="text" name="licencia" class="form-control" value="{{ $taxista->licencia }}">
-        </div>
-
+        {{-- Teléfono --}}
         <div class="mb-3">
             <label>Teléfono</label>
-            <input type="text" name="num_telefono" class="form-control" value="{{ $taxista->num_telefono }}">
+            <input type="text" name="telefono" class="form-control" 
+                   value="{{ old('telefono', $user->telefono) }}">
         </div>
 
+        {{-- Dirección --}}
         <div class="mb-3">
-            <label>Foto del Conductor</label>
-            <input type="file" name="foto_conductor" class="form-control">
-            @if($taxista->foto_conductor)
-                <img src="{{ asset('storage/'.$taxista->foto_conductor) }}" width="120" class="mt-2">
-            @endif
+            <label>Dirección</label>
+            <input type="text" name="direccion" class="form-control" 
+                   value="{{ old('direccion', $user->direccion) }}">
         </div>
 
-        <div class="mb-3">
-            <label>Foto del Taxi</label>
-            <input type="file" name="foto_taxi" class="form-control">
-            @if($taxista->foto_taxi)
-                <img src="{{ asset('storage/'.$taxista->foto_taxi) }}" width="120" class="mt-2">
-            @endif
-        </div>
-
-        <div class="mb-3">
-            <label>Ubicación Actual</label>
-            <input type="text" name="ubicacion_actual" class="form-control" value="{{ $taxista->ubicacion_actual }}">
-        </div>
-
+        {{-- Estado --}}
         <div class="mb-3">
             <label>Estado</label>
             <select name="estado" class="form-control">
-                <option value="activo" {{ $taxista->estado == 'activo' ? 'selected' : '' }}>Activo</option>
-                <option value="inactivo" {{ $taxista->estado == 'inactivo' ? 'selected' : '' }}>Inactivo</option>
+                <option value="activo" {{ $user->estado == 'activo' ? 'selected' : '' }}>Activo</option>
+                <option value="inactivo" {{ $user->estado == 'inactivo' ? 'selected' : '' }}>Inactivo</option>
             </select>
         </div>
 
+        {{-- Turno --}}
         <div class="mb-3">
             <label>Turno</label>
             <select name="turno" class="form-control">
-                <option value="mañana" {{ $taxista->turno == 'mañana' ? 'selected' : '' }}>Mañana</option>
-                <option value="tarde" {{ $taxista->turno == 'tarde' ? 'selected' : '' }}>Tarde</option>
-                <option value="noche" {{ $taxista->turno == 'noche' ? 'selected' : '' }}>Noche</option>
+                <option value="">--Seleccionar--</option>
+                <option value="mañana" {{ $user->turno == 'mañana' ? 'selected' : '' }}>Mañana</option>
+                <option value="tarde" {{ $user->turno == 'tarde' ? 'selected' : '' }}>Tarde</option>
+                <option value="noche" {{ $user->turno == 'noche' ? 'selected' : '' }}>Noche</option>
             </select>
         </div>
 
+        {{-- Licencia --}}
         <div class="mb-3">
-            <label>Carro Asignado (id_carro)</label>
-            <input type="number" name="id_carro" class="form-control" value="{{ $taxista->id_carro }}">
+            <label>Licencia (Archivo)</label>
+            <input type="file" name="licencia" class="form-control">
+            @if(!empty($user->licencia))
+                <small class="text-muted">
+                    Archivo actual: {{ basename($user->licencia) }}
+                </small>
+            @endif
         </div>
 
+        {{-- Foto de conductor --}}
         <div class="mb-3">
-            <label>Género (id_genero)</label>
-            <input type="number" name="id_genero" class="form-control" value="{{ $taxista->id_genero }}">
+            <label>Foto del conductor</label>
+            <input type="file" name="foto_conductor" class="form-control">
+            @if(!empty($user->foto_conductor))
+                <small class="text-muted">
+                    Archivo actual: {{ basename($user->foto_conductor) }}
+                </small>
+            @endif
         </div>
 
+        {{-- Foto del taxi --}}
         <div class="mb-3">
-            <label>Idioma (id_idioma)</label>
-            <input type="number" name="id_idoma" class="form-control" value="{{ $taxista->id_idoma }}">
+            <label>Foto del taxi</label>
+            <input type="file" name="foto_taxi" class="form-control">
+            @if(!empty($user->foto_taxi))
+                <small class="text-muted">
+                    Archivo actual: {{ basename($user->foto_taxi) }}
+                </small>
+            @endif
         </div>
 
+        {{-- Nueva Contraseña --}}
         <div class="mb-3">
             <label>Nueva Contraseña</label>
-            <input type="password" name="contrasena" class="form-control">
-            <small>Dejar vacío si no deseas cambiarla</small>
+            <input type="password" name="password" class="form-control">
+            <small class="text-muted">Dejar vacío si no deseas cambiarla</small>
         </div>
 
         <button type="submit" class="btn btn-success">Guardar Cambios</button>

@@ -3,45 +3,69 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Taxista;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class PerfilController extends Controller
 {
     public function show()
     {
-        $taxista = Auth::user(); // si tu login es con taxistas
-        return view('perfil.show', compact('taxista'));
+        $user = Auth::user();
+        return view('perfil.show', compact('user'));
     }
 
     public function edit()
     {
-        $taxista = Auth::user();
-        return view('perfil.edit', compact('taxista'));
+        $user = Auth::user();
+        return view('perfil.edit', compact('user'));
     }
 
     public function update(Request $request)
     {
-        $taxista = Auth::user();
+        $user = Auth::user();
 
         $request->validate([
-            'nombre' => 'required|string|max:100',
-            'apellidos' => 'required|string|max:100',
-            'num_telefono' => 'required|string|max:20',
-            'contrasena' => 'nullable|min:6'
+            'apellidos' => 'nullable|string|max:100',
+            'edad' => 'nullable|integer',
+            'ine' => 'nullable|string|max:255',
+            'permiso' => 'nullable|string|max:255',
+            'telefono' => 'nullable|string|max:20',
+            'direccion' => 'nullable|string|max:255',
+            'estado' => 'in:activo,inactivo',
+            'turno' => 'nullable|in:mañana,tarde,noche',
+            'licencia' => 'nullable|file|mimes:pdf,jpg,png,jpeg|max:2048',
+            'foto_conductor' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'foto_taxi' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'password' => 'nullable|min:6',
         ]);
 
-        $data = $request->all();
+        // Campos generales
+        $user->apellidos = $request->apellidos;
+        $user->edad = $request->edad;
+        $user->ine = $request->ine;
+        $user->permiso = $request->permiso;
+        $user->telefono = $request->telefono;
+        $user->direccion = $request->direccion;
+        $user->estado = $request->estado ?? $user->estado;
+        $user->turno = $request->turno;
 
-        if ($request->filled('contrasena')) {
-            $data['contrasena'] = Hash::make($request->contrasena);
-        } else {
-            unset($data['contrasena']);
+        // Guardar archivos
+        if ($request->hasFile('licencia')) {
+            $user->licencia = $request->file('licencia')->store('licencias', 'public');
+        }
+        if ($request->hasFile('foto_conductor')) {
+            $user->foto_conductor = $request->file('foto_conductor')->store('fotos', 'public');
+        }
+        if ($request->hasFile('foto_taxi')) {
+            $user->foto_taxi = $request->file('foto_taxi')->store('fotos', 'public');
         }
 
-        $taxista->update($data);
+        // Contraseña
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->password);
+        }
 
-        return redirect()->route('perfil.show')->with('success', 'Perfil actualizado correctamente.');
+        $user->save();
+
+        return redirect()->route('perfil.show')->with('success', 'Perfil actualizado correctamente');
     }
 }
