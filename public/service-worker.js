@@ -1,5 +1,5 @@
 // service-worker.js
-
+var staticCacheName = "pwa-v1" + new Date().getTime();
 const putInCache = async (request, response) => {
   const cache = await caches.open("v1");
   await cache.put(request, response);
