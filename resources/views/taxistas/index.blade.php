@@ -2,10 +2,18 @@
 
 @section('content')
 <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
     html, body {
+        height: 100%;
         background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-                    url('https://static.wixstatic.com/media/952b60_67f559efb50a4101804756294550c92a~mv2.jpg')
-                    no-repeat center center/cover;
+            url('https://static.wixstatic.com/media/952b60_67f559efb50a4101804756294550c92a~mv2.jpg')
+            no-repeat center center/cover;
         color: #fff;
     }
 
@@ -13,28 +21,61 @@
         flex: 1;
         width: 90%;
         max-width: 1200px;
-        margin: 40px auto;
+        margin: 50px auto;
+        animation: fadeIn 1s ease-in-out;
     }
 
     h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 20px;
         text-align: center;
-        margin-bottom: 30px;
-        font-size: 2.5rem;
-        text-shadow: 2px 2px 6px #000;
+        color: #000;
+        text-shadow: 
+            0 0 5px #e18222ff,
+            0 0 10px #e18222ff,
+            0 0 15px #e18222ff,
+            0 0 20px #e18222ff,
+            0 0 25px #e18222ff,
+            2px 2px 4px rgba(255,255,255,0.3);
+        animation: neonGlow 2s ease-in-out infinite alternate;
     }
 
-    /* Grid */
+    @keyframes neonGlow {
+        from {
+            text-shadow: 0 0 5px #efad6bff, 0 0 10px #efad6bff, 0 0 15px #efad6bff,
+                         0 0 20px #efad6bff, 0 0 25px #efad6bff, 2px 2px 4px rgba(255,255,255,0.3);
+        }
+        to {
+            text-shadow: 0 0 10px #fbdb5bff, 0 0 20px #fbdb5bff, 0 0 30px #fbdb5bff,
+                         0 0 40px #fbdb5bff, 0 0 50px #fbdb5bff, 2px 2px 4px rgba(255,255,255,0.5);
+        }
+    }
+
+    .intro-text {
+        text-align: center;
+        font-size: 1.3rem;
+        font-weight: 500;
+        background: linear-gradient(90deg, #ffc107, #e18222ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 50px;
+        transition: transform 0.3s;
+    }
+
+    .intro-text:hover {
+        transform: scale(1.05);
+    }
+
+    /* --- GRID TARJETAS --- */
     .grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 20px;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 25px;
     }
 
-    /* Card Flip */
     .card {
-        color: #2c2c2c;
         perspective: 1000px;
-        cursor: pointer;
     }
 
     .card-inner {
@@ -43,34 +84,32 @@
         height: 350px;
         transition: transform 0.8s;
         transform-style: preserve-3d;
-        border-radius: 12px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     }
 
-    .card.flipped .card-inner {
+    .card:hover .card-inner {
         transform: rotateY(180deg);
     }
 
-    /* Caras */
     .card-front, .card-back {
         position: absolute;
         width: 100%;
         height: 100%;
         backface-visibility: hidden;
-        border-radius: 12px;
+        border-radius: 15px;
         overflow: hidden;
-        background: #fff;
     }
 
     .card-front {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.2);
     }
 
     .card-front img {
         width: 100%;
-        height: 200px;
+        height: 60%;
         object-fit: cover;
     }
 
@@ -80,52 +119,85 @@
     }
 
     .card-front .card-body h2 {
-        font-size: 1.25rem;
-        margin-bottom: 8px;
+        font-size: 1.2rem;
+        margin-bottom: 5px;
+        color: #ffc107;
     }
 
     .card-back {
+        background: rgba(26,26,26,0.9);
+        backdrop-filter: blur(10px);
+        color: #fff;
         transform: rotateY(180deg);
         padding: 20px;
-        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        border: 1px solid rgba(255,255,255,0.1);
     }
 
     .card-back h2 {
+        font-size: 1.2rem;
         margin-bottom: 10px;
+        color: #ffc107;
     }
 
     .card-back p {
-        margin-bottom: 6px;
         font-size: 0.95rem;
-        color: #333;
+        margin-bottom: 8px;
+        color: #ddd;
     }
 
     .card-back hr {
-        margin: 10px 0;
+        width: 100%;
         border: 0;
-        border-top: 1px solid #eee;
+        border-top: 1px solid rgba(255,255,255,0.2);
+        margin: 10px 0;
     }
 
-    .toggle-btn {
-        display: inline-block;
-        margin-top: 10px;
-        background: #ffc107;
-        color: #000;
-        padding: 8px 12px;
-        border-radius: 8px;
+    footer {
+        background: linear-gradient(180deg, #2c2c2c 0%, #1a1a1a 50%, #0f0f0f 100%);
+        color: #fff;
+        text-align: center;
+        padding: 30px 20px;
         font-size: 0.9rem;
-        cursor: pointer;
-        transition: all 0.3s;
+        letter-spacing: 1px;
+        margin-top: 50px;
+        position: relative;
+        overflow: hidden;
     }
 
-    .toggle-btn:hover {
-        background: #ffb300;
+    footer::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, transparent 0%, #ff9900ff 25%, #ff9900ff 50%, transparent 75%);
+        animation: roadLine 3s linear infinite;
+    }
+
+    @keyframes roadLine {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    footer p:first-child {
+        color: #ffcc00;
+        text-shadow: 0 0 10px #ffcc00;
+        font-weight: 600;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 </style>
 
 <div class="container">
     <h1>Taxistas Verificados</h1>
-
     <div class="grid">
         @forelse($taxistas as $taxista)
             <div class="card">
@@ -136,49 +208,31 @@
                             <img src="{{ asset('uploads/fotos/' . $taxista->usuario->fotos->first()->url) }}"
                                  alt="Foto de {{ $taxista->usuario->nombre ?? 'Taxista' }}">
                         @else
-                            <img src="{{ asset('images/default-avatar.svg') }}"
-                                 alt="Foto de {{ $taxista->usuario->nombre ?? 'Taxista' }}">
+                            <img src="{{ asset('images/default-avatar.svg') }}" alt="Foto por defecto">
                         @endif
                         <div class="card-body">
-<<<<<<< HEAD
-                            <h2>{{ $taxista->nombre }} {{ $taxista->apellidos }}</h2>
-                            <p>Edad: {{ $taxista->edad }}</p>
-                         
-=======
                             <h2>{{ $taxista->usuario->nombre ?? 'Sin nombre' }} {{ $taxista->usuario->apellido ?? '' }}</h2>
                             <p>Taxista Verificado</p>
-                            <span class="toggle-btn">Más información</span>
->>>>>>> 99146fd4ebe8881e222fd03505d6005f0d2f4221
                         </div>
                     </div>
 
                     <!-- BACK -->
                     <div class="card-back">
                         <h2>{{ $taxista->usuario->nombre ?? 'Sin nombre' }} {{ $taxista->usuario->apellido ?? '' }}</h2>
-                        <p>Teléfono: {{ $taxista->usuario->telefono ?? 'No disponible' }}</p>
-                        <p>Email: {{ $taxista->usuario->email ?? 'No disponible' }}</p>
+                        <p>📞 Teléfono: {{ $taxista->usuario->telefono ?? 'No disponible' }}</p>
+                        <p>📧 Email: {{ $taxista->usuario->email ?? 'No disponible' }}</p>
                         <hr>
-                        <h3>Documentos:</h3>
-                        @if($taxista->matricula && $taxista->matricula->estatus)
-                            <p>Matrícula: <strong>{{ ucfirst($taxista->matricula->estatus->nombre) }}</strong></p>
-                        @else
-                            <p>Matrícula: <em>Pendiente</em></p>
-                        @endif
-
-                        @if($taxista->licencia && $taxista->licencia->estatus)
-                            <p>Licencia: <strong>{{ ucfirst($taxista->licencia->estatus->nombre) }}</strong></p>
-                        @else
-                            <p>Licencia: <em>Pendiente</em></p>
-                        @endif
-
+                        <h3>📄 Documentos:</h3>
+                        <p>Matrícula: <strong>{{ $taxista->matricula->estatus->nombre ?? 'Pendiente' }}</strong></p>
+                        <p>Licencia: <strong>{{ $taxista->licencia->estatus->nombre ?? 'Pendiente' }}</strong></p>
                         <hr>
-                        <h3>Vehículo:</h3>
+                        <h3>🚗 Vehículo:</h3>
                         @if($taxista->taxis->count() > 0)
                             <p>Marca: <strong>{{ $taxista->taxis->first()->marca }}</strong></p>
                             <p>Modelo: <strong>{{ $taxista->taxis->first()->modelo }}</strong></p>
                             <p>Número: <strong>#{{ $taxista->taxis->first()->numero_taxi }}</strong></p>
                         @else
-                            <p>Vehículo: <em>No registrado</em></p>
+                            <p><em>No registrado</em></p>
                         @endif
                     </div>
                 </div>
@@ -192,20 +246,8 @@
     </div>
 </div>
 
-<script>
-    // Script para el flip de tarjetas
-    document.querySelectorAll('.card').forEach(card => {
-        card.addEventListener('click', (e) => {
-<<<<<<< HEAD
-            // Solo girar si se hace clic en el botón
-            card.classList.toggle('flipped');
-        
-=======
-            if (e.target.classList.contains('toggle-btn')) {
-                card.classList.toggle('flipped');
-            }
->>>>>>> 99146fd4ebe8881e222fd03505d6005f0d2f4221
-        });
-    });
-</script>
+<footer>
+    <p>&copy; 2025 NAWI TECNOLOGÍAS S.A. DE C.V.</p>
+    <p>Todos los derechos reservados.</p>
+</footer>
 @endsection
