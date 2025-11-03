@@ -67,3 +67,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/ver-documento/{tipo}/{id}', [App\Http\Controllers\AdminController::class, 'verDocumento'])->name('admin.ver.documento');
     Route::get('/admin/descargar-documento/{tipo}/{id}', [App\Http\Controllers\AdminController::class, 'descargarDocumento'])->name('admin.descargar.documento');
 });
+
+Route::get('/offline', function () {
+    return view('offline');
+});

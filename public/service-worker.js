@@ -1,49 +1,48 @@
-// service-worker.js
-var staticCacheName = "pwa-v1" + new Date().getTime();
-const putInCache = async (request, response) => {
-  const cache = await caches.open("v1");
-  await cache.put(request, response);
-};
+var staticCacheName = "pwa-v" + new Date().getTime();
+var filesToCache = [
+    '/manifest.json',
+    '/offline',
+    '/images/nawi-icon-96.png',
+    '/images/nawi-icon-192.png',
+    '/images/nawi-icon-512.png',
+];
 
-const cacheFirst = async ({ request, fallbackUrl }) => {
-  // First try to get the resource from the cache.
-  const responseFromCache = await caches.match(request);
-  if (responseFromCache) {
-    return responseFromCache;
-  }
+// Cache on install
+self.addEventListener("install", event => {
+    self.skipWaiting();
+    event.waitUntil(
+        caches.open(staticCacheName)
+            .then(cache => {
+                return cache.addAll(filesToCache);
+            })
+    )
+});
 
-  // If the response was not found in the cache,
-  // try to get the resource from the network.
-  try {
-    const responseFromNetwork = await fetch(request);
-    // If the network request succeeded, clone the response:
-    // - put one copy in the cache, for the next time
-    // - return the original to the app
-    // Cloning is needed because a response can only be consumed once.
-    putInCache(request, responseFromNetwork.clone());
-    return responseFromNetwork;
-  } catch (error) {
-    // If the network request failed,
-    // get the fallback response from the cache.
-    const fallbackResponse = await caches.match(fallbackUrl);
-    if (fallbackResponse) {
-      return fallbackResponse;
-    }
-    // When even the fallback response is not available,
-    // there is nothing we can do, but we must always
-    // return a Response object.
-    return new Response("Network error happened", {
-      status: 408,
-      headers: { "Content-Type": "text/plain" },
-    });
-  }
-};
+// Clear cache on activate
+self.addEventListener('activate', event => {
+    event.waitUntil(
+        caches.keys().then(cacheNames => {
+            return Promise.all(
+                cacheNames
+                    .filter(cacheName => (cacheName.startsWith("pwa-")))
+                    .filter(cacheName => (cacheName !== staticCacheName))
+                    .map(cacheName => caches.delete(cacheName))
+            );
+        }).then(function(){
+            return self.clients.claim();
+        })
+    );
+});
 
-self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    cacheFirst({
-      request: event.request,
-      fallbackUrl: "/fallback.html",
-    }),
-  );
+// Serve from Cache
+self.addEventListener("fetch", event => {
+    event.respondWith(
+        caches.match(event.request)
+            .then(response => {
+                return response || fetch(event.request);
+            })
+            .catch(() => {
+                return caches.match('/offline');
+            })
+    )
 });

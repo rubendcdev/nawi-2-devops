@@ -9,6 +9,9 @@ use App\Http\Controllers\PasajeroController;
 use App\Http\Controllers\MatriculaController;
 use App\Http\Controllers\LicenciaController;
 use App\Http\Controllers\TaxistaController;
+use App\Http\Controllers\PasajeroViajeController;
+use App\Http\Controllers\TaxistaViajeController;
+use App\Http\Controllers\SistemaViajeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,11 +39,34 @@ Route::middleware('auth:api')->group(function () {
     // Pasajeros (protegidas)
     Route::apiResource('pasajeros', PasajeroController::class);
 
+    // ========== ENDPOINTS PARA PASAJEROS ==========
+    Route::prefix('pasajero')->group(function () {
+        Route::post('/crear-viaje', [PasajeroViajeController::class, 'crearViaje']);
+        Route::get('/mis-viajes', [PasajeroViajeController::class, 'misViajes']);
+        Route::post('/cancelar-viaje/{viajeId}', [PasajeroViajeController::class, 'cancelarViaje']);
+        Route::post('/calificar-viaje/{viajeId}', [PasajeroViajeController::class, 'calificarViaje']);
+    });
+
     // Taxistas (protegidas)
     Route::get('/taxista/me', [TaxistaController::class, 'me']);
     Route::post('/taxista/upload-matricula', [TaxistaController::class, 'uploadMatricula']);
     Route::post('/taxista/upload-licencia', [TaxistaController::class, 'uploadLicencia']);
     Route::get('/taxista/documents', [TaxistaController::class, 'getDocuments']);
+
+    // ========== ENDPOINTS PARA TAXISTAS ==========
+    Route::prefix('taxista')->group(function () {
+        Route::get('/viajes-disponibles', [TaxistaViajeController::class, 'viajesDisponibles']);
+        Route::get('/mis-viajes', [TaxistaViajeController::class, 'misViajes']);
+        Route::post('/aceptar-viaje/{viajeId}', [TaxistaViajeController::class, 'aceptarViaje']);
+        Route::post('/rechazar-viaje/{viajeId}', [TaxistaViajeController::class, 'rechazarViaje']);
+        Route::post('/completar-viaje/{viajeId}', [TaxistaViajeController::class, 'completarViaje']);
+    });
+
+    // ========== ENDPOINTS DEL SISTEMA ==========
+    Route::prefix('viaje')->group(function () {
+        Route::get('/estado/{viajeId}', [SistemaViajeController::class, 'estadoViaje']);
+        Route::post('/actualizar-ubicacion/{viajeId}', [SistemaViajeController::class, 'actualizarUbicacion']);
+    });
 });
 
 // Rutas para Géneros (públicas)
