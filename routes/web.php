@@ -38,6 +38,12 @@ Route::post('/register/taxista', [WebAuthController::class, 'registerTaxista']);
 
 Route::post('/logout', [WebAuthController::class, 'logout'])->name('logout');
 
+// Rutas de recuperación de contraseña
+Route::get('/password/forgot', [App\Http\Controllers\PasswordResetController::class, 'showForgotPasswordForm'])->name('password.forgot');
+Route::post('/password/email', [App\Http\Controllers\PasswordResetController::class, 'sendResetLink'])->name('password.email');
+Route::get('/password/reset/{token}', [App\Http\Controllers\PasswordResetController::class, 'showResetForm'])->name('password.reset');
+Route::post('/password/reset', [App\Http\Controllers\PasswordResetController::class, 'resetPassword'])->name('password.update');
+
 // Rutas protegidas para taxistas
 Route::middleware(['auth'])->group(function () {
     Route::get('/taxista/dashboard', [TaxistaController::class, 'dashboard'])->name('taxista.dashboard');
