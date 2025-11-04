@@ -13,17 +13,24 @@ class EstatusDocumentoSeeder extends Seeder
      */
     public function run(): void
     {
+        // Verificar si los estatus ya existen para evitar duplicados
+        $existingEstatus = DB::table('estatus_documentos')->count();
+        if ($existingEstatus > 0) {
+            return; // Ya existen estatus, no insertar de nuevo
+        }
+
+        // Usar IDs UUID consistentes para los estatus
         $estatus = [
             [
-                'id' => '1',
+                'id' => '00000000-0000-0000-0000-000000000001', // Pendiente
                 'nombre' => 'pendiente'
             ],
             [
-                'id' => '2',
+                'id' => '00000000-0000-0000-0000-000000000002', // Aprobado
                 'nombre' => 'aprobado'
             ],
             [
-                'id' => '3',
+                'id' => '00000000-0000-0000-0000-000000000003', // Rechazado
                 'nombre' => 'rechazado'
             ]
         ];

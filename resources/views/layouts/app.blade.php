@@ -29,7 +29,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/nawi-icon-192.png') }}">
 
     <!-- Estilos -->
-    <!-- <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet"> -->3
+    <!-- <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet"> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 
@@ -120,9 +120,9 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/sw.js')
+                navigator.serviceWorker.register('/service-worker.js', { scope: '.' })
                     .then(function(registration) {
-                        console.log('ServiceWorker registration successful');
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
                     })
                     .catch(function(err) {
                         console.log('ServiceWorker registration failed: ', err);

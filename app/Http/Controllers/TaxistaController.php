@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Taxista;
 use App\Models\Matricula;
 use App\Models\Licencia;
+use App\Services\EstatusDocumentoService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
@@ -12,8 +13,12 @@ use Illuminate\Support\Facades\Log;
 
 class TaxistaController extends Controller
 {
-    public function __construct()
+    protected $estatusService;
+
+    public function __construct(EstatusDocumentoService $estatusService)
     {
+        $this->estatusService = $estatusService;
+        
         // Solo aplicar autenticación a métodos específicos de API
         $this->middleware('auth:api')->only([
             'me', 'uploadMatricula', 'uploadLicencia', 'getDocuments'
@@ -77,7 +82,7 @@ class TaxistaController extends Controller
             'id' => Str::uuid(),
             'url' => $nombreArchivo,
             'fecha_subida' => now(),
-            'id_estatus' => '1' // pendiente
+            'id_estatus' => $this->estatusService->getPendienteId()
         ]);
 
         // Actualizar taxista con la matrícula
@@ -119,7 +124,7 @@ class TaxistaController extends Controller
             'id' => Str::uuid(),
             'url' => $nombreArchivo,
             'fecha_subida' => now(),
-            'id_estatus' => '1' // pendiente
+            'id_estatus' => $this->estatusService->getPendienteId()
         ]);
 
         // Actualizar taxista con la licencia
@@ -205,7 +210,7 @@ class TaxistaController extends Controller
             'id' => Str::uuid(),
             'url' => $nombreArchivo,
             'fecha_subida' => now(),
-            'id_estatus' => '1' // pendiente
+            'id_estatus' => $this->estatusService->getPendienteId()
         ]);
 
         // Actualizar taxista con la matrícula
@@ -240,7 +245,7 @@ class TaxistaController extends Controller
             'id' => Str::uuid(),
             'url' => $nombreArchivo,
             'fecha_subida' => now(),
-            'id_estatus' => '1' // pendiente
+            'id_estatus' => $this->estatusService->getPendienteId()
         ]);
 
         // Actualizar taxista con la licencia
@@ -262,10 +267,10 @@ class TaxistaController extends Controller
                 'taxis'
             ])
             ->whereHas('matricula', function($query) {
-                $query->where('id_estatus', '2'); // aprobado
+                $query->where('id_estatus', $this->estatusService->getAprobadoId());
             })
             ->whereHas('licencia', function($query) {
-                $query->where('id_estatus', '2'); // aprobado
+                $query->where('id_estatus', $this->estatusService->getAprobadoId());
             })
             ->get();
 

@@ -6,6 +6,7 @@ use App\Models\Usuario;
 use App\Models\Pasajero;
 use App\Models\Taxista;
 use App\Models\Admin;
+use App\Services\RoleService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
@@ -13,6 +14,13 @@ use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
+    protected $roleService;
+
+    public function __construct(RoleService $roleService)
+    {
+        $this->roleService = $roleService;
+    }
+
     /**
      * Registro de pasajero (rol = 2)
      */
@@ -26,7 +34,18 @@ class AuthController extends Controller
             'password' => 'required|string|min:6'
         ]);
 
-        // Crear usuario con rol pasajero (id = 2)
+        // Asegurar que el rol existe
+        $this->roleService->ensureDefaultRoles();
+        $rolPasajero = $this->roleService->getRoleByName('pasajero');
+
+        if (!$rolPasajero) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: el rol de pasajero no existe'
+            ], 500);
+        }
+
+        // Crear usuario con rol pasajero
         $usuario = Usuario::create([
             'id' => Str::uuid(),
             'nombre' => $request->nombre,
@@ -34,7 +53,7 @@ class AuthController extends Controller
             'telefono' => $request->telefono,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'id_rol' => '2' // Rol pasajero
+            'id_rol' => $rolPasajero->id
         ]);
 
         // Crear registro en tabla pasajeros
@@ -66,7 +85,18 @@ class AuthController extends Controller
             'password' => 'required|string|min:6'
         ]);
 
-        // Crear usuario con rol taxista (id = 3)
+        // Asegurar que el rol existe
+        $this->roleService->ensureDefaultRoles();
+        $rolTaxista = $this->roleService->getRoleByName('taxista');
+
+        if (!$rolTaxista) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: el rol de taxista no existe'
+            ], 500);
+        }
+
+        // Crear usuario con rol taxista
         $usuario = Usuario::create([
             'id' => Str::uuid(),
             'nombre' => $request->nombre,
@@ -74,7 +104,7 @@ class AuthController extends Controller
             'telefono' => $request->telefono,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'id_rol' => '3' // Rol taxista
+            'id_rol' => $rolTaxista->id
         ]);
 
         // Crear registro en tabla taxistas (sin documentos por ahora)

@@ -6,15 +6,19 @@ use App\Models\Matricula;
 use App\Models\Licencia;
 use App\Models\Taxista;
 use App\Models\EstatusDocumento;
+use App\Services\EstatusDocumentoService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
-    public function __construct()
+    protected $estatusService;
+
+    public function __construct(EstatusDocumentoService $estatusService)
     {
         $this->middleware('auth');
+        $this->estatusService = $estatusService;
     }
 
     /**
@@ -22,19 +26,25 @@ class AdminController extends Controller
      */
     public function dashboard()
     {
+        // Asegurar que los estatus existen
+        $this->estatusService->ensureDefaultEstatus();
+        
+        $pendienteId = $this->estatusService->getPendienteId();
+        $aprobadoId = $this->estatusService->getAprobadoId();
+
         $matriculasPendientes = Matricula::with(['estatus', 'taxistas.usuario'])
-            ->where('id_estatus', '1') // pendiente
+            ->where('id_estatus', $pendienteId)
             ->get();
 
         $licenciasPendientes = Licencia::with(['estatus', 'taxistas.usuario'])
-            ->where('id_estatus', '1') // pendiente
+            ->where('id_estatus', $pendienteId)
             ->get();
 
         $estadisticas = [
-            'matriculas_pendientes' => Matricula::where('id_estatus', '1')->count(),
-            'licencias_pendientes' => Licencia::where('id_estatus', '1')->count(),
-            'matriculas_aprobadas' => Matricula::where('id_estatus', '2')->count(),
-            'licencias_aprobadas' => Licencia::where('id_estatus', '2')->count(),
+            'matriculas_pendientes' => Matricula::where('id_estatus', $pendienteId)->count(),
+            'licencias_pendientes' => Licencia::where('id_estatus', $pendienteId)->count(),
+            'matriculas_aprobadas' => Matricula::where('id_estatus', $aprobadoId)->count(),
+            'licencias_aprobadas' => Licencia::where('id_estatus', $aprobadoId)->count(),
             'total_taxistas' => Taxista::count(),
         ];
 
@@ -77,7 +87,7 @@ class AdminController extends Controller
             return back()->with('error', 'Documento no encontrado');
         }
 
-        $documento->update(['id_estatus' => '2']); // aprobado
+        $documento->update(['id_estatus' => $this->estatusService->getAprobadoId()]);
 
         return back()->with('success', 'Documento aprobado exitosamente');
     }
@@ -103,7 +113,7 @@ class AdminController extends Controller
             return back()->with('error', 'Documento no encontrado');
         }
 
-        $documento->update(['id_estatus' => '3']); // rechazado
+        $documento->update(['id_estatus' => $this->estatusService->getRechazadoId()]);
 
         return back()->with('success', 'Documento rechazado exitosamente');
     }
