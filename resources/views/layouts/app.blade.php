@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>{{ config('app.name', 'Laravel') }}</title>
+
+    <!-- Fonts -->
+    <link rel="dns-prefetch" href="//fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+
+    <!-- PWA Configuration -->
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <meta name="theme-color" content="#ffc107">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="NAWI">
+    <!-- Favicon Configuration -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/nawi-icon-192.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/nawi-icon-192.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('images/nawi-icon-192.png') }}">
+    <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('images/nawi-icon-512.png') }}">
+    <link rel="shortcut icon" href="{{ asset('images/nawi-icon-192.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/nawi-icon-192.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/nawi-icon-192.png') }}">
+
+    <!-- Estilos -->
+    <!-- <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet"> -->3
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+
+<style>
+    nav {
+        background: rgba(255, 255, 255, 0.05); /* Transparente estilo glass */
+        backdrop-filter: blur(12px); /* efecto blur */
+        border-bottom: 2px solid #ffc10753; /* borde amarillo */
+        box-shadow: 0 4px 20px rgba(255, 193, 7, 0.3); /* glow amarillo */
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        border-radius: 0 0 15px 15px; /* esquinas redondeadas abajo */
+    }
+
+    nav .nav-logo img {
+        height: 55px;
+        transition: transform 0.3s;
+    }
+
+    nav .nav-logo img:hover {
+        transform: scale(1.1);
+    }
+
+    nav .nav-links a {
+        color: #fff; /* letras blancas */
+        text-decoration: none;
+        font-weight: bold;
+        margin: 0 15px;
+        transition: color 0.3s, transform 0.2s, text-shadow 0.3s;
+    }
+
+    nav .nav-links a:hover {
+        color: #ffc107; /* hover amarillo */
+        transform: translateY(-2px);
+        text-shadow: 0 0 8px rgba(255, 193, 7, 0.8); /* glow en hover */
+    }
+</style>
+
+
+    <!-- Scripts -->
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+<script type="text/javascript">
+    // Initialize the service worker
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js', {
+            scope: '.'
+        }).then(function (registration) {
+            // Registration was successful
+            console.log('Laravel PWA: ServiceWorker registration successful with scope: ', registration.scope);
+        }, function (err) {
+            // registration failed :(
+            console.log('Laravel PWA: ServiceWorker registration failed: ', err);
+        });
+    }
+</script>
+</head>
+<body>
+    <div id="app">
+        <nav>
+            <div class="nav-logo">
+                <a href="/"><img src="{{ asset('images/logoab.png') }}" alt="Logo Nawi"></a>
+            </div>
+            <div class="nav-links">
+                <a href="/">Inicio</a>
+                <a href="/taxistas">Taxistas</a>
+                <a href="/sobre-nosotros">Sobre Nosotros</a>
+                @auth
+                    @if(auth()->user()->rol->nombre === 'admin')
+                        <a href="/admin/dashboard">Admin</a>
+                    @endif
+                @endauth
+            </div>
+        </nav>
+
+        <main class="py-4">
+            @yield('content')
+        </main>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <!--<script src="{{ asset('install-pwa.js') }}"></script>-->
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/service-worker.js', { scope: '.' })
+                    .then(function(registration) {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(function(err) {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+
+        AOS.init({ once: true });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug PWA - NAWI</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#ffc107">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .debug-section {
+            background: #333;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .icon-test {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin: 10px 0;
+        }
+        .icon-test img {
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+        }
+        button {
+            background: #ffc107;
+            color: #1a1a1a;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #ffb300;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #4CAF50; }
+        .error { background: #f44336; }
+        .warning { background: #ff9800; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Debug PWA - NAWI</h1>
+
+    <div class="debug-section">
+        <h2>📱 Estado del Service Worker</h2>
+        <div id="sw-status">Verificando...</div>
+        <button onclick="checkServiceWorker()">Verificar SW</button>
+        <button onclick="clearCache()">Limpiar Cache</button>
+    </div>
+
+    <div class="debug-section">
+        <h2>🖼️ Iconos del Manifest</h2>
+        <div class="icon-test">
+            <img src="/images/logobuen(4).png" alt="Logo 96x96" width="96" height="96">
+            <span>96x96 (Shortcuts) - logobuen(4)</span>
+        </div>
+        <div class="icon-test">
+            <img src="/images/logobuen(1).png" alt="Logo 192x192" width="192" height="192">
+            <span>192x192 (Icono principal) - logobuen(1)</span>
+        </div>
+        <div class="icon-test">
+            <img src="/images/logobuen(2).png" alt="Logo 512x512" width="256" height="256">
+            <span>512x512 (Icono grande) - logobuen(2)</span>
+        </div>
+        <div class="icon-test">
+            <img src="/images/logobuen(3).png" alt="Logo 1280x720" width="320" height="180">
+            <span>1280x720 (Screenshot) - logobuen(3)</span>
+        </div>
+    </div>
+
+    <div class="debug-section">
+        <h2>📋 Información del Manifest</h2>
+        <div id="manifest-info">Cargando...</div>
+        <button onclick="loadManifest()">Cargar Manifest</button>
+    </div>
+
+    <div class="debug-section">
+        <h2>🗂️ Cache del Navegador</h2>
+        <div id="cache-info">Verificando...</div>
+        <button onclick="checkCache()">Verificar Cache</button>
+        <button onclick="clearAllCache()">Limpiar Todo</button>
+    </div>
+
+    <div class="debug-section">
+        <h2>🔄 Instrucciones de Actualización</h2>
+        <ol>
+            <li><strong>Limpiar Cache:</strong> Usa el botón "Limpiar Todo" arriba</li>
+            <li><strong>Recargar Página:</strong> Presiona Ctrl+F5 (forzar recarga)</li>
+            <li><strong>Verificar Iconos:</strong> Los iconos de arriba deben mostrar tus nuevas imágenes</li>
+            <li><strong>Reinstalar PWA:</strong> Si ya está instalada, desinstálala y vuelve a instalarla</li>
+        </ol>
+    </div>
+
+    <script>
+        // Verificar Service Worker
+        function checkServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    if (registrations.length > 0) {
+                        document.getElementById('sw-status').innerHTML =
+                            '<div class="status success">✅ Service Worker activo (' + registrations.length + ' registros)</div>';
+                    } else {
+                        document.getElementById('sw-status').innerHTML =
+                            '<div class="status warning">⚠️ No hay Service Workers registrados</div>';
+                    }
+                });
+            } else {
+                document.getElementById('sw-status').innerHTML =
+                    '<div class="status error">❌ Service Worker no soportado</div>';
+        }
+
+        // Cargar información del manifest
+        function loadManifest() {
+            fetch('/manifest.json')
+                .then(response => response.json())
+                .then(manifest => {
+                    document.getElementById('manifest-info').innerHTML =
+                        '<div class="status success">✅ Manifest cargado correctamente</div>' +
+                        '<pre>' + JSON.stringify(manifest, null, 2) + '</pre>';
+                })
+                .catch(error => {
+                    document.getElementById('manifest-info').innerHTML =
+                        '<div class="status error">❌ Error cargando manifest: ' + error + '</div>';
+                });
+        }
+
+        // Verificar cache
+        function checkCache() {
+            if ('caches' in window) {
+                caches.keys().then(function(cacheNames) {
+                    let cacheInfo = '<div class="status success">✅ Cache disponible</div>';
+                    cacheInfo += '<ul>';
+                    cacheNames.forEach(cacheName => {
+                        cacheInfo += '<li>' + cacheName + '</li>';
+                    });
+                    cacheInfo += '</ul>';
+                    document.getElementById('cache-info').innerHTML = cacheInfo;
+                });
+            } else {
+                document.getElementById('cache-info').innerHTML =
+                    '<div class="status error">❌ Cache API no disponible</div>';
+            }
+        }
+
+        // Limpiar cache específico
+        function clearCache() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for(let registration of registrations) {
+                        registration.unregister();
+                    }
+                    document.getElementById('sw-status').innerHTML =
+                        '<div class="status success">✅ Service Workers desregistrados</div>';
+                });
+            }
+        }
+
+        // Limpiar todo el cache
+        function clearAllCache() {
+            if ('caches' in window) {
+                caches.keys().then(function(cacheNames) {
+                    return Promise.all(
+                        cacheNames.map(function(cacheName) {
+                            return caches.delete(cacheName);
+                        })
+                    );
+                }).then(function() {
+                    document.getElementById('cache-info').innerHTML =
+                        '<div class="status success">✅ Todo el cache limpiado</div>';
+
+                    // También limpiar service workers
+                    if ('serviceWorker' in navigator) {
+                        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                            for(let registration of registrations) {
+                                registration.unregister();
+                            }
+                        });
+                    }
+
+                    // Recargar página después de 2 segundos
+                    setTimeout(function() {
+                        window.location.reload(true);
+                    }, 2000);
+                });
+            }
+        }
+
+        // Ejecutar verificaciones al cargar
+        window.onload = function() {
+            checkServiceWorker();
+            loadManifest();
+            checkCache();
+        };
+    </script>
+</body>
+</html>

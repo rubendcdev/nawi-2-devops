@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificar Iconos PWA - NAWI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .icon-test {
+            background: #333;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+        }
+        .icon-display {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin: 15px 0;
+        }
+        .icon-display img {
+            border: 3px solid #ffc107;
+            border-radius: 12px;
+            background: white;
+            padding: 5px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success { background: #4CAF50; }
+        .error { background: #f44336; }
+        .warning { background: #ff9800; }
+        button {
+            background: #ffc107;
+            color: #1a1a1a;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #ffb300;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Verificar Iconos PWA</h1>
+
+    <div class="icon-test">
+        <h2>📱 Iconos del Manifest (Para acceso directo)</h2>
+        <div class="icon-display">
+            <img src="/images/nawi-icon-192.png" alt="Icono 192x192" width="96" height="96">
+            <div>
+                <strong>192x192 (Acceso directo)</strong><br>
+                <code>/images/nawi-icon-192.png</code>
+            </div>
+        </div>
+        <div class="icon-display">
+            <img src="/images/nawi-icon-512.png" alt="Icono 512x512" width="128" height="128">
+            <div>
+                <strong>512x512 (Icono grande)</strong><br>
+                <code>/images/nawi-icon-512.png</code>
+            </div>
+        </div>
+    </div>
+
+    <div class="icon-test">
+        <h2>🔗 Shortcuts (Menú contextual)</h2>
+        <div class="icon-display">
+            <img src="/images/nawi-icon-96.png" alt="Icono 96x96" width="96" height="96">
+            <div>
+                <strong>96x96 (Shortcuts)</strong><br>
+                <code>/images/nawi-icon-96.png</code>
+            </div>
+        </div>
+    </div>
+
+    <div class="icon-test">
+        <h2>🛠️ Solución para el Acceso Directo</h2>
+        <p><strong>Si el acceso directo sigue mostrando el icono anterior:</strong></p>
+        <ol>
+            <li><strong>Desinstala la PWA completamente</strong></li>
+            <li><strong>Ejecuta el script:</strong> <code>public/clear-system-cache.bat</code></li>
+            <li><strong>Reinicia el navegador</strong></li>
+            <li><strong>Reinstala la PWA</strong></li>
+        </ol>
+
+        <button onclick="clearCache()">🧹 Limpiar Cache</button>
+        <button onclick="reloadPage()">🔄 Recargar</button>
+    </div>
+
+    <div class="icon-test">
+        <h2>✅ Verificación Final</h2>
+        <p>Después de reinstalar, verifica que:</p>
+        <ul>
+            <li>✅ El icono del acceso directo sea <strong>logobuen</strong></li>
+            <li>✅ El icono dentro de la app sea <strong>logobuen</strong></li>
+            <li>✅ Los shortcuts usen <strong>logobuen</strong></li>
+        </ul>
+    </div>
+
+    <script>
+        function clearCache() {
+            if ('caches' in window) {
+                caches.keys().then(function(cacheNames) {
+                    return Promise.all(
+                        cacheNames.map(function(cacheName) {
+                            return caches.delete(cacheName);
+                        })
+                    );
+                }).then(function() {
+                    alert('Cache limpiado. Ahora desinstala y reinstala la PWA.');
+                });
+            } else {
+                alert('Cache API no disponible');
+            }
+        }
+
+        function reloadPage() {
+            window.location.reload(true);
+        }
+
+        // Verificar si las imágenes se cargan
+        window.onload = function() {
+            const images = document.querySelectorAll('img');
+            images.forEach((img, index) => {
+                img.onload = function() {
+                    console.log('✅ Imagen cargada:', img.src);
+                };
+                img.onerror = function() {
+                    console.error('❌ Error cargando:', img.src);
+                };
+            });
+        };
+    </script>
+</body>
+</html>
+
+
+
+
+
