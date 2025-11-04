@@ -18,7 +18,8 @@
     }
 
     .container {
-        flex: 1;
+        position: relative;
+        z-index: 2;
         width: 90%;
         max-width: 1200px;
         margin: 50px auto;
@@ -78,11 +79,18 @@
         perspective: 1000px;
     }
 
+    .card:nth-child(1) { animation-delay: 0.1s; }
+    .card:nth-child(2) { animation-delay: 0.2s; }
+    .card:nth-child(3) { animation-delay: 0.3s; }
+    .card:nth-child(4) { animation-delay: 0.4s; }
+    .card:nth-child(5) { animation-delay: 0.5s; }
+    .card:nth-child(6) { animation-delay: 0.6s; }
+
     .card-inner {
         position: relative;
         width: 100%;
-        height: 350px;
-        transition: transform 0.8s;
+        height: 100%;
+        transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         transform-style: preserve-3d;
         border-radius: 15px;
         box-shadow: 0 5px 15px rgba(0,0,0,0.3);
@@ -111,11 +119,23 @@
         width: 100%;
         height: 60%;
         object-fit: cover;
+        border-radius: 20px 20px 0 0;
+        transition: all 0.3s ease;
+    }
+
+    .card:hover .card-front img {
+        transform: scale(1.05);
     }
 
     .card-front .card-body {
-        padding: 15px;
+        padding: 25px;
         text-align: center;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        z-index: 2;
+        position: relative;
     }
 
     .card-front .card-body h2 {
@@ -228,18 +248,26 @@
                         <hr>
                         <h3>🚗 Vehículo:</h3>
                         @if($taxista->taxis->count() > 0)
-                            <p>Marca: <strong>{{ $taxista->taxis->first()->marca }}</strong></p>
-                            <p>Modelo: <strong>{{ $taxista->taxis->first()->modelo }}</strong></p>
-                            <p>Número: <strong>#{{ $taxista->taxis->first()->numero_taxi }}</strong></p>
+                            <div class="info-item">
+                                <strong>Marca:</strong> {{ $taxista->taxis->first()->marca }}
+                            </div>
+                            <div class="info-item">
+                                <strong>Modelo:</strong> {{ $taxista->taxis->first()->modelo }}
+                            </div>
+                            <div class="info-item">
+                                <strong>Número:</strong> #{{ $taxista->taxis->first()->numero_taxi }}
+                            </div>
                         @else
                             <p><em>No registrado</em></p>
                         @endif
+
+                        <span class="toggle-btn">Volver</span>
                     </div>
                 </div>
             </div>
         @empty
-            <div class="col-12 text-center">
-                <h3>No hay taxistas verificados aún</h3>
+            <div class="empty-state">
+                <h3>🚕 No hay taxistas verificados aún</h3>
                 <p>Los taxistas aparecerán aquí una vez que sus documentos sean aprobados por el administrador.</p>
             </div>
         @endforelse

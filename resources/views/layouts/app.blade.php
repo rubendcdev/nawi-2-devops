@@ -16,7 +16,7 @@
     <!-- PWA Configuration -->
     <link rel="manifest" href="{{ asset('manifest.json') }}">
     <meta name="theme-color" content="#ffc107">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="NAWI">
     <!-- Favicon Configuration -->
@@ -29,7 +29,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/nawi-icon-192.png') }}">
 
     <!-- Estilos -->
-    <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet">
+    <!-- <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet"> -->3
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 
@@ -76,6 +76,20 @@
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+<script type="text/javascript">
+    // Initialize the service worker
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js', {
+            scope: '.'
+        }).then(function (registration) {
+            // Registration was successful
+            console.log('Laravel PWA: ServiceWorker registration successful with scope: ', registration.scope);
+        }, function (err) {
+            // registration failed :(
+            console.log('Laravel PWA: ServiceWorker registration failed: ', err);
+        });
+    }
+</script>
 </head>
 <body>
     <div id="app">
@@ -100,7 +114,7 @@
         </main>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-    <script src="{{ asset('install-pwa.js') }}"></script>
+    <!--<script src="{{ asset('install-pwa.js') }}"></script>-->
 
     <!-- Service Worker Registration -->
     <script>
