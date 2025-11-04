@@ -5,10 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Viaje;
 use App\Models\Pasajero;
 use App\Models\CalificacionViaje;
+use App\Models\Taxista;
+use App\Models\Taxi;
+use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class PasajeroViajeController extends Controller
@@ -24,15 +28,35 @@ class PasajeroViajeController extends Controller
      */
     public function crearViaje(Request $request): JsonResponse
     {
+        // ✅ Obtener el usuario autenticado del token
+        $usuarioAutenticado = $request->user();
+
+        if (!$usuarioAutenticado) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Usuario no autenticado'
+            ], 401);
+        }
+
+        // ✅ Obtener el pasajero del usuario autenticado
+        $pasajero = $usuarioAutenticado->pasajero;
+
+        if (!$pasajero) {
+            return response()->json([
+                'success' => false,
+                'message' => 'El usuario autenticado no es un pasajero'
+            ], 403);
+        }
+
+        // ✅ Validar solo los datos de ubicación
         $validator = Validator::make($request->all(), [
-            'id_pasajero' => 'required|string|exists:pasajeros,id',
             'salida' => 'required|array',
             'salida.lat' => 'required|numeric|between:-90,90',
             'salida.lon' => 'required|numeric|between:-180,180',
             'destino' => 'required|array',
             'destino.lat' => 'required|numeric|between:-90,90',
             'destino.lon' => 'required|numeric|between:-180,180',
-            'id_taxista' => 'nullable|string|exists:taxistas,id'
+            'id_taxista' => 'nullable|string'
         ]);
 
         if ($validator->fails()) {
@@ -43,80 +67,113 @@ class PasajeroViajeController extends Controller
             ], 422);
         }
 
-        $pasajero = Pasajero::find($request->id_pasajero);
-        if (!$pasajero) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Pasajero no encontrado'
-            ], 404);
-        }
+        // ✅ Validar que el taxista existe (si se envía)
+        $taxistaId = null;
+        $taxiId = null; // ✅ Agregar esta variable
+        if ($request->has('id_taxista') && $request->id_taxista) {
+            // El id_taxista que viene de Flutter es el ID del usuario, no el ID de la tabla taxistas
+            $usuarioTaxista = Usuario::find($request->id_taxista);
 
-        // Verificar que el pasajero sea el usuario autenticado
-        if ($request->user()->id !== $pasajero->id_usuario) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No autorizado'
-            ], 403);
+            if (!$usuarioTaxista) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El taxista seleccionado no existe en la base de datos'
+                ], 422);
+            }
+
+            // Verificar que el usuario tenga el rol de taxista
+            if ($usuarioTaxista->id_rol != '00000000-0000-0000-0000-000000000003') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El usuario seleccionado no es un taxista'
+                ], 422);
+            }
+
+            // Buscar el registro de taxista asociado al usuario
+            $taxista = Taxista::where('id_usuario', $usuarioTaxista->id)->first();
+
+            if (!$taxista) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El taxista no tiene un registro en la tabla taxistas'
+                ], 422);
+            }
+
+            $taxistaId = $taxista->id; // ID de la tabla taxistas
+
+            // ✅ OBTENER EL TAXI DEL TAXISTA (obligatorio)
+            $taxi = Taxi::where('id_taxista', $taxista->id)->first();
+
+            if (!$taxi) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El taxista seleccionado no tiene un taxi registrado'
+                ], 422);
+            }
+
+            $taxiId = $taxi->id;
         }
 
         try {
-            DB::beginTransaction();
+    DB::beginTransaction();
 
-            // Obtener direcciones - por ahora usar "Origen" y "Destino" como placeholder
-            // TODO: Implementar geocodificación inversa para obtener direcciones reales
-            // Se puede usar la API de Google Maps con reverse geocoding
-            $direccionOrigen = 'Origen';
-            $direccionDestino = 'Destino';
-            
-            // Intentar obtener direcciones reales (si el servicio lo soporta)
-            try {
-                // Por ahora usamos placeholders, pero aquí se puede agregar la lógica de reverse geocoding
-            } catch (\Exception $e) {
-                // Si falla, usar placeholders
-            }
+    $direccionOrigen = 'Origen';
+    $direccionDestino = 'Destino';
 
-            $viaje = Viaje::create([
-                'id' => Str::uuid(),
-                'id_pasajero' => $request->id_pasajero,
-                'id_taxista' => $request->id_taxista,
-                'latitud_origen' => $request->salida['lat'],
-                'longitud_origen' => $request->salida['lon'],
-                'direccion_origen' => $direccionOrigen['success'] ? $direccionOrigen['formatted_address'] : 'Origen',
-                'latitud_destino' => $request->destino['lat'],
-                'longitud_destino' => $request->destino['lon'],
-                'direccion_destino' => $direccionDestino['success'] ? $direccionDestino['formatted_address'] : 'Destino',
-                'estado' => Viaje::ESTADO_SOLICITADO,
-                'id_taxi' => null
-            ]);
+    // ✅ Preparar datos del viaje
+    $viajeData = [
+        'id' => Str::uuid(),
+        'id_pasajero' => $pasajero->id,
+        'latitud_origen' => $request->salida['lat'],
+        'longitud_origen' => $request->salida['lon'],
+        'direccion_origen' => $direccionOrigen,
+        'latitud_destino' => $request->destino['lat'],
+        'longitud_destino' => $request->destino['lon'],
+        'direccion_destino' => $direccionDestino,
+        'estado' => Viaje::ESTADO_SOLICITADO,
+    ];
 
-            DB::commit();
+    // ✅ Solo incluir id_taxista y id_taxi si existe el taxista
+    if ($taxistaId) {
+        $viajeData['id_taxista'] = $taxistaId;
+        $viajeData['id_taxi'] = $taxiId; // ✅ Asignar el taxi del taxista (siempre existe si hay taxista)
+    }
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Viaje creado exitosamente',
-                'data' => [
-                    'id' => $viaje->id,
-                    'id_pasajero' => $viaje->id_pasajero,
-                    'id_taxista' => $viaje->id_taxista,
-                    'latitud_origen' => $viaje->latitud_origen,
-                    'longitud_origen' => $viaje->longitud_origen,
-                    'direccion_origen' => $viaje->direccion_origen,
-                    'latitud_destino' => $viaje->latitud_destino,
-                    'longitud_destino' => $viaje->longitud_destino,
-                    'direccion_destino' => $viaje->direccion_destino,
-                    'estado' => $viaje->estado,
-                    'fecha_creacion' => $viaje->created_at->toIso8601String()
-                ]
-            ], 201);
+    $viaje = Viaje::create($viajeData);
 
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al crear el viaje',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+    DB::commit();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Viaje creado exitosamente',
+        'data' => [
+            'id' => $viaje->id,
+            'id_pasajero' => $viaje->id_pasajero,
+            'id_taxista' => $viaje->id_taxista,
+            'latitud_origen' => $viaje->latitud_origen,
+            'longitud_origen' => $viaje->longitud_origen,
+            'direccion_origen' => $viaje->direccion_origen,
+            'latitud_destino' => $viaje->latitud_destino,
+            'longitud_destino' => $viaje->longitud_destino,
+            'direccion_destino' => $viaje->direccion_destino,
+            'estado' => $viaje->estado,
+            'fecha_creacion' => $viaje->created_at->toIso8601String()
+        ]
+    ], 201);
+} catch (\Exception $e) {
+    DB::rollBack();
+
+    Log::error('Error al crear viaje: ' . $e->getMessage(), [
+        'usuario_id' => $usuarioAutenticado->id,
+        'request' => $request->all()
+    ]);
+
+    return response()->json([
+        'success' => false,
+        'message' => 'Error al crear el viaje',
+        'error' => $e->getMessage()
+    ], 500);
+}
     }
 
     /**
