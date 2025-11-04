@@ -55,6 +55,11 @@
                         </div>
 
                         <div class="text-center mt-3">
+                            <p>
+                                <a href="{{ route('password.forgot') }}" class="text-decoration-none">
+                                    <i class="fas fa-key"></i> ¿Olvidaste tu contraseña?
+                                </a>
+                            </p>
                             <p>¿No tienes cuenta?
                                 <a href="{{ route('register.taxista') }}">Registrarse como Taxista</a>
                             </p>

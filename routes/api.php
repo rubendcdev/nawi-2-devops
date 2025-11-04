@@ -30,6 +30,17 @@ Route::post('/register/pasajero', [AuthController::class, 'registerPasajero']);
 Route::post('/register/taxista', [AuthController::class, 'registerTaxista']);
 Route::post('/login', [AuthController::class, 'login']);
 
+// Rutas de recuperación de contraseña (públicas)
+// Endpoint principal: solicitar recuperación de contraseña
+Route::post('/password/forgot', [App\Http\Controllers\PasswordResetController::class, 'sendResetLinkApi']);
+Route::post('/password/email', [App\Http\Controllers\PasswordResetController::class, 'sendResetLinkApi']); // Alias para compatibilidad
+
+// Endpoint principal: restablecer contraseña con token
+Route::post('/password/reset', [App\Http\Controllers\PasswordResetController::class, 'resetPasswordApi']);
+
+// Endpoint adicional: verificar token de recuperación
+Route::post('/password/verify-token', [App\Http\Controllers\PasswordResetController::class, 'verifyToken']);
+
 // Endpoint público para crear roles básicos (útil para primera instalación)
 Route::post('/roles/ensure-defaults', [RoleController::class, 'ensureDefaults']);
 
