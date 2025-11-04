@@ -12,6 +12,7 @@ use App\Http\Controllers\TaxistaController;
 use App\Http\Controllers\PasajeroViajeController;
 use App\Http\Controllers\TaxistaViajeController;
 use App\Http\Controllers\SistemaViajeController;
+use App\Http\Controllers\RoleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +29,9 @@ use App\Http\Controllers\SistemaViajeController;
 Route::post('/register/pasajero', [AuthController::class, 'registerPasajero']);
 Route::post('/register/taxista', [AuthController::class, 'registerTaxista']);
 Route::post('/login', [AuthController::class, 'login']);
+
+// Endpoint público para crear roles básicos (útil para primera instalación)
+Route::post('/roles/ensure-defaults', [RoleController::class, 'ensureDefaults']);
 
 // Rutas protegidas con Passport
 Route::middleware('auth:api')->group(function () {
@@ -67,6 +71,9 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/estado/{viajeId}', [SistemaViajeController::class, 'estadoViaje']);
         Route::post('/actualizar-ubicacion/{viajeId}', [SistemaViajeController::class, 'actualizarUbicacion']);
     });
+
+    // ========== GESTIÓN DE ROLES ==========
+    Route::apiResource('roles', RoleController::class);
 });
 
 // Rutas para Géneros (públicas)

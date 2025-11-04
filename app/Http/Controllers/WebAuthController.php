@@ -90,7 +90,7 @@ class WebAuthController extends Controller
             'telefono' => $request->telefono,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'id_rol' => '3' // Rol taxista
+            'id_rol' => '00000000-0000-0000-0000-000000000003' // Rol taxista
         ]);
 
         // Crear registro en tabla taxistas (sin documentos por ahora)
