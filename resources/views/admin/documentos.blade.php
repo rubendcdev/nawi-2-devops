@@ -1,101 +1,11 @@
 @extends('layouts.app')
-<style>
-            body {
-            font-family: 'Montserrat', sans-serif;
-            margin: 0;
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://static.wixstatic.com/media/952b60_67f559efb50a4101804756294550c92a~mv2.jpg') no-repeat center center/cover;
-            color: #000;
-        }
-</style>
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/common.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/documents.css') }}">
+@endpush
+
 @section('content')
-<style>
-    .admin-documentos {
-        min-height: 100vh;
-        padding: 20px;
-    }
-
-    .document-card {
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 15px;
-        padding: 20px;
-        margin-bottom: 15px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .status-badge {
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-size: 0.9rem;
-        font-weight: bold;
-    }
-
-    .status-pendiente {
-        background: #fff3cd;
-        color: #856404;
-    }
-
-    .status-aprobado {
-        background: #d4edda;
-        color: #155724;
-    }
-
-    .status-rechazado {
-        background: #f8d7da;
-        color: #721c24;
-    }
-
-    .btn-action {
-        padding: 8px 16px;
-        border-radius: 8px;
-        border: none;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.3s;
-        margin: 2px;
-    }
-
-    .btn-approve {
-        background: #28a745;
-        color: white;
-    }
-
-    .btn-approve:hover {
-        background: #218838;
-        transform: translateY(-2px);
-    }
-
-    .btn-reject {
-        background: #dc3545;
-        color: white;
-    }
-
-    .btn-reject:hover {
-        background: #c82333;
-        transform: translateY(-2px);
-    }
-
-    .btn-view {
-        background: #17a2b8;
-        color: white;
-    }
-
-    .btn-view:hover {
-        background: #138496;
-        transform: translateY(-2px);
-    }
-
-    .btn-download {
-        background: #6f42c1;
-        color: white;
-    }
-
-    .btn-download:hover {
-        background: #5a32a3;
-        transform: translateY(-2px);
-    }
-</style>
 
 <div class="admin-documentos">
     <div class="container">

@@ -1,68 +1,16 @@
 @extends('layouts.app')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/common.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/forms.css') }}">
+@endpush
+
 @section('content')
-<style>
-            body {
-            font-family: 'Montserrat', sans-serif;
-            margin: 0;
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://static.wixstatic.com/media/952b60_67f559efb50a4101804756294550c92a~mv2.jpg') no-repeat center center/cover;
-            color: #000;
-        }
-
-
-    .form-card {
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 15px;
-        padding: 30px;
-        color: #000;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .form-control {
-        border-radius: 10px;
-        border: 2px solid #e9ecef;
-        padding: 12px 15px;
-        transition: all 0.3s;
-    }
-
-    .form-control:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-    }
-
-    .btn-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border: none;
-        border-radius: 10px;
-        padding: 12px 30px;
-        font-weight: bold;
-        transition: all 0.3s;
-    }
-
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-    }
-
-    .btn-secondary {
-        border-radius: 10px;
-        padding: 12px 30px;
-        font-weight: bold;
-    }
-
-    .btn-danger {
-        border-radius: 10px;
-        padding: 12px 30px;
-        font-weight: bold;
-    }
-</style>
 
 <div class="taxi-form">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-8">
+            <div class="col-12">
                 <div class="form-card">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2 class="mb-0">
@@ -140,6 +88,7 @@
                                            value="{{ old('numero_taxi', $taxi->numero_taxi) }}"
                                            placeholder="Ej: 0110, 1234, 0001"
                                            maxlength="10"
+                                           pattern="[0-9]+"
                                            required>
                                     @error('numero_taxi')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -176,4 +125,59 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Validación para marca - solo letras, espacios, guiones y puntos
+    const marcaInput = document.getElementById('marca');
+    if (marcaInput) {
+        marcaInput.addEventListener('input', function(e) {
+            // Remover caracteres no permitidos
+            this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\-\.]/g, '');
+        });
+        
+        marcaInput.addEventListener('keypress', function(e) {
+            // Prevenir caracteres especiales peligrosos
+            const char = String.fromCharCode(e.which);
+            if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\-\.]$/.test(char)) {
+                e.preventDefault();
+            }
+        });
+    }
+
+    // Validación para modelo - solo letras, espacios, guiones y puntos
+    const modeloInput = document.getElementById('modelo');
+    if (modeloInput) {
+        modeloInput.addEventListener('input', function(e) {
+            // Remover caracteres no permitidos
+            this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\-\.]/g, '');
+        });
+        
+        modeloInput.addEventListener('keypress', function(e) {
+            // Prevenir caracteres especiales peligrosos
+            const char = String.fromCharCode(e.which);
+            if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\-\.]$/.test(char)) {
+                e.preventDefault();
+            }
+        });
+    }
+
+    // Validación para numero_taxi - solo números
+    const numeroTaxiInput = document.getElementById('numero_taxi');
+    if (numeroTaxiInput) {
+        numeroTaxiInput.addEventListener('input', function(e) {
+            // Remover todo lo que no sea número
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+        
+        numeroTaxiInput.addEventListener('keypress', function(e) {
+            // Solo permitir números
+            const char = String.fromCharCode(e.which);
+            if (!/^[0-9]$/.test(char)) {
+                e.preventDefault();
+            }
+        });
+    }
+});
+</script>
 @endsection

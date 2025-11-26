@@ -1,83 +1,11 @@
 @extends('layouts.app')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/common.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/documents.css') }}">
+@endpush
+
 @section('content')
-<style>
-
-        html, body {
-        background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-                    url('https://static.wixstatic.com/media/952b60_67f559efb50a4101804756294550c92a~mv2.jpg')
-                    no-repeat center center/cover;
-        color: #000;
-    }
-
-    .document-card {
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 15px;
-        padding: 25px;
-        color: rgba(0, 0, 0, 0.6);
-        margin-bottom: 20px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .status-badge {
-        padding: 8px 16px;
-        border-radius: 25px;
-        font-size: 1rem;
-        font-weight: bold;
-    }
-
-    .status-pendiente {
-        background: #fff3cd;
-        color: #856404;
-    }
-
-    .status-aprobado {
-        background: #d4edda;
-        color: #155724;
-    }
-
-    .status-rechazado {
-        background: #f8d7da;
-        color: #721c24;
-    }
-
-    .upload-area {
-        border: 2px dashed #ccc;
-        border-radius: 10px;
-        padding: 40px;
-        text-align: center;
-        transition: all 0.3s;
-        cursor: pointer;
-    }
-
-    .upload-area:hover {
-        border-color: #667eea;
-        background: rgba(102, 126, 234, 0.1);
-    }
-
-    .upload-area.dragover {
-        border-color: #667eea;
-        background: rgba(102, 126, 234, 0.2);
-    }
-
-    .btn-upload {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border: none;
-        color: white;
-        padding: 12px 30px;
-        border-radius: 25px;
-        font-weight: bold;
-        transition: all 0.3s;
-    }
-
-    .btn-upload:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-        color: white;
-    }
-</style>
 
 <div class="documents-page">
     <div class="container">

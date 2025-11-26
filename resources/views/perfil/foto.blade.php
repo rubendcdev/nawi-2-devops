@@ -1,85 +1,11 @@
 @extends('layouts.app')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/common.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/perfil.css') }}">
+@endpush
+
 @section('content')
-<style>
-     body {
-        font-family: 'Montserrat', sans-serif;
-        margin: 0;
-        background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://static.wixstatic.com/media/952b60_67f559efb50a4101804756294550c92a~mv2.jpg') no-repeat center center/cover;
-        color: #000;
-    }
-
-    .foto-perfil {
-        min-height: 100vh;
-        padding: 20px;
-    }
-
-    .foto-card {
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 15px;
-        padding: 30px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .foto-preview {
-        width: 200px;
-        height: 200px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 4px solid #fff;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-        margin: 0 auto;
-        display: block;
-    }
-
-    .upload-area {
-        border: 2px dashed #ccc;
-        border-radius: 15px;
-        padding: 40px;
-        text-align: center;
-        transition: all 0.3s;
-        cursor: pointer;
-        background: #f8f9fa;
-    }
-
-    .upload-area:hover {
-        border-color: #667eea;
-        background: rgba(102, 126, 234, 0.1);
-    }
-
-    .upload-area.dragover {
-        border-color: #667eea;
-        background: rgba(102, 126, 234, 0.2);
-    }
-
-    .btn-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border: none;
-        border-radius: 10px;
-        padding: 12px 30px;
-        font-weight: bold;
-        transition: all 0.3s;
-    }
-
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-    }
-
-    .btn-danger {
-        border-radius: 10px;
-        padding: 12px 30px;
-        font-weight: bold;
-    }
-
-    .btn-secondary {
-        border-radius: 10px;
-        padding: 12px 30px;
-        font-weight: bold;
-    }
-</style>
 
 <div class="foto-perfil">
     <div class="container">

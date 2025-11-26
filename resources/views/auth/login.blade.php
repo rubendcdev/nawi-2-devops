@@ -1,16 +1,15 @@
 @extends('layouts.app')
-<style>
-            body {
-            font-family: 'Montserrat', sans-serif;
-            margin: 0;
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://static.wixstatic.com/media/952b60_67f559efb50a4101804756294550c92a~mv2.jpg') no-repeat center center/cover;
-            color: #000;
-        }
-</style>
+
+@push('styles')
+    <!-- Estilos comunes y de autenticación -->
+    <link rel="stylesheet" href="{{ asset('css/common.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
+@endpush
+
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-6">
+        <div class="col-12">
             <div class="card">
                 <div class="card-header">
                     <h3 class="text-center">🔐 Iniciar Sesión</h3>
