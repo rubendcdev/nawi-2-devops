@@ -1,0 +1,154 @@
+/* ============================================
+   ESTILOS PARA DOCUMENTOS Y ADMIN
+   ============================================ */
+
+body {
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Tarjetas de documentos */
+.document-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    padding: 25px;
+    color: rgba(0, 0, 0, 0.6);
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Badges de estado */
+.status-badge {
+    padding: 8px 16px;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.status-pendiente {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-aprobado {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-rechazado {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* Área de carga */
+.upload-area {
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    padding: 40px;
+    text-align: center;
+    transition: all 0.3s;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.upload-area:hover {
+    border-color: #ffc107;
+    background: rgba(255, 193, 7, 0.1);
+}
+
+.upload-area.dragover {
+    border-color: #ffc107;
+    background: rgba(255, 193, 7, 0.2);
+}
+
+/* Botón de carga */
+.btn-upload {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    border: none;
+    color: #000;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.btn-upload:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
+    color: #000;
+}
+
+/* Botones de acción */
+.btn-action {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin: 2px;
+}
+
+.btn-approve {
+    background: #28a745;
+    color: white;
+}
+
+.btn-approve:hover {
+    background: #218838;
+    transform: translateY(-2px);
+    color: white;
+}
+
+.btn-reject {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-reject:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+    color: white;
+}
+
+.btn-view {
+    background: #17a2b8;
+    color: white;
+}
+
+.btn-view:hover {
+    background: #138496;
+    transform: translateY(-2px);
+    color: white;
+}
+
+.btn-download {
+    background: #6f42c1;
+    color: white;
+}
+
+.btn-download:hover {
+    background: #5a32a3;
+    transform: translateY(-2px);
+    color: white;
+}
+
+/* Página de admin */
+.admin-documentos {
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .document-card {
+        padding: 15px;
+    }
+    
+    .upload-area {
+        padding: 20px;
+    }
+}
+

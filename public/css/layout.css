@@ -1,0 +1,60 @@
+/* ============================================
+   ESTILOS PARA LAYOUT Y NAVEGACIÓN
+   ============================================ */
+
+/* Navegación */
+nav {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    border-bottom: 2px solid #ffc10753;
+    box-shadow: 0 4px 20px rgba(255, 193, 7, 0.3);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-radius: 0 0 15px 15px;
+}
+
+nav .nav-logo img {
+    height: 55px;
+    transition: transform 0.3s;
+}
+
+nav .nav-logo img:hover {
+    transform: scale(1.1);
+}
+
+nav .nav-links a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 0 15px;
+    transition: color 0.3s, transform 0.2s, text-shadow 0.3s;
+}
+
+nav .nav-links a:hover {
+    color: #ffc107;
+    transform: translateY(-2px);
+    text-shadow: 0 0 8px rgba(255, 193, 7, 0.8);
+}
+
+/* Botón de cerrar sesión en el nav */
+nav .nav-links button {
+    background: none;
+    border: none;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 0 15px;
+    transition: color 0.3s, transform 0.2s, text-shadow 0.3s;
+}
+
+nav .nav-links button:hover {
+    color: #ffc107;
+    transform: translateY(-2px);
+    text-shadow: 0 0 8px rgba(255, 193, 7, 0.8);
+}
+

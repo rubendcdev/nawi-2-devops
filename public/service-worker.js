@@ -1,7 +1,11 @@
 var staticCacheName = "pwa-v" + new Date().getTime();
 var filesToCache = [
+    '/jquery-3.7.1.min.js',
     '/manifest.json',
     '/offline',
+    '/css/common.css',
+    '/css/layout.css',
+    '/images/default-avatar.svg',
     '/images/nawi-icon-96.png',
     '/images/nawi-icon-192.png',
     '/images/nawi-icon-512.png',

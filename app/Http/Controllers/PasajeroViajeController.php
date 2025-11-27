@@ -192,17 +192,37 @@ class PasajeroViajeController extends Controller
         }
 
         $viajes = Viaje::where('id_pasajero', $pasajero->id)
-            ->with(['taxi.taxista.usuario', 'calificacion'])
+            ->with(['taxi.taxista.usuario', 'pasajero.usuario', 'calificacion'])
             ->orderBy('created_at', 'desc')
             ->get();
 
         return response()->json([
             'success' => true,
             'data' => $viajes->map(function ($viaje) {
+                $taxista = $viaje->taxi ? $viaje->taxi->taxista : null;
+                $taxistaUsuario = $taxista && $taxista->usuario ? $taxista->usuario : null;
+                $taxi = $viaje->taxi;
+                
                 return [
                     'id' => $viaje->id,
                     'pasajero_id' => $viaje->id_pasajero,
-                    'taxista_id' => $viaje->taxi ? $viaje->taxi->taxista->id : null,
+                    'pasajero' => $viaje->pasajero && $viaje->pasajero->usuario ? [
+                        'nombre' => $viaje->pasajero->usuario->nombre,
+                        'apellido' => $viaje->pasajero->usuario->apellido,
+                        'email' => $viaje->pasajero->usuario->email
+                    ] : null,
+                    'taxista' => $taxista && $taxistaUsuario ? [
+                        'id' => $taxista->id,
+                        'nombre' => $taxistaUsuario->nombre,
+                        'apellido' => $taxistaUsuario->apellido,
+                        'numero_taxi' => $taxi ? $taxi->numero_taxi : null,
+                        'taxi' => $taxi ? [
+                            'id' => $taxi->id,
+                            'marca' => $taxi->marca,
+                            'modelo' => $taxi->modelo,
+                            'numero_taxi' => $taxi->numero_taxi
+                        ] : null
+                    ] : null,
                     'latitud_origen' => $viaje->latitud_origen,
                     'longitud_origen' => $viaje->longitud_origen,
                     'direccion_origen' => $viaje->direccion_origen,

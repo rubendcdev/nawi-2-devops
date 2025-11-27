@@ -20,7 +20,7 @@ class SistemaViajeController extends Controller
      */
     public function estadoViaje(Request $request, string $viajeId): JsonResponse
     {
-        $viaje = Viaje::with(['taxi.taxista.usuario', 'pasajero.usuario'])
+        $viaje = Viaje::with(['taxi.taxista.usuario', 'taxi', 'pasajero.usuario'])
             ->find($viajeId);
 
         if (!$viaje) {
@@ -36,7 +36,24 @@ class SistemaViajeController extends Controller
                 'id' => $viaje->id,
                 'estado' => $viaje->estado,
                 'id_pasajero' => $viaje->id_pasajero,
+                'pasajero' => $viaje->pasajero && $viaje->pasajero->usuario ? [
+                    'nombre' => $viaje->pasajero->usuario->nombre,
+                    'apellido' => $viaje->pasajero->usuario->apellido,
+                    'email' => $viaje->pasajero->usuario->email
+                ] : null,
                 'id_taxista' => $viaje->id_taxista ?? ($viaje->taxi ? $viaje->taxi->taxista->id : null),
+                'taxista' => $viaje->taxi && $viaje->taxi->taxista && $viaje->taxi->taxista->usuario ? [
+                    'id' => $viaje->taxi->taxista->id,
+                    'nombre' => $viaje->taxi->taxista->usuario->nombre,
+                    'apellido' => $viaje->taxi->taxista->usuario->apellido,
+                    'numero_taxi' => $viaje->taxi ? $viaje->taxi->numero_taxi : null,
+                    'taxi' => $viaje->taxi ? [
+                        'id' => $viaje->taxi->id,
+                        'marca' => $viaje->taxi->marca,
+                        'modelo' => $viaje->taxi->modelo,
+                        'numero_taxi' => $viaje->taxi->numero_taxi
+                    ] : null
+                ] : null,
                 'salida' => [
                     'lat' => $viaje->latitud_origen,
                     'lon' => $viaje->longitud_origen

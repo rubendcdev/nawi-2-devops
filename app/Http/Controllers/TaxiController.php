@@ -35,9 +35,13 @@ class TaxiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'marca' => 'required|string|max:45',
-            'modelo' => 'required|string|max:45',
-            'numero_taxi' => 'required|string|max:10|unique:taxis,numero_taxi',
+            'marca' => ['required', 'string', 'max:45', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\-\.]+$/'],
+            'modelo' => ['required', 'string', 'max:45', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\-\.]+$/'],
+            'numero_taxi' => ['required', 'string', 'max:10', 'regex:/^[0-9]+$/', 'unique:taxis,numero_taxi'],
+        ], [
+            'marca.regex' => 'La marca solo puede contener letras, espacios, guiones y puntos.',
+            'modelo.regex' => 'El modelo solo puede contener letras, espacios, guiones y puntos.',
+            'numero_taxi.regex' => 'El número de taxi solo puede contener números.',
         ]);
 
         $user = auth()->user();
@@ -47,12 +51,12 @@ class TaxiController extends Controller
             return back()->with('error', 'Taxista no encontrado');
         }
 
-        // Crear taxi
+        // Sanitizar y crear taxi
         $taxi = Taxi::create([
             'id' => Str::uuid(),
-            'marca' => $request->marca,
-            'modelo' => $request->modelo,
-            'numero_taxi' => $request->numero_taxi,
+            'marca' => strip_tags(trim($request->marca)),
+            'modelo' => strip_tags(trim($request->modelo)),
+            'numero_taxi' => trim($request->numero_taxi),
             'id_taxista' => $taxista->id
         ]);
 
@@ -86,9 +90,13 @@ class TaxiController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'marca' => 'required|string|max:45',
-            'modelo' => 'required|string|max:45',
-            'numero_taxi' => 'required|string|max:10|unique:taxis,numero_taxi,' . $id,
+            'marca' => ['required', 'string', 'max:45', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\-\.]+$/'],
+            'modelo' => ['required', 'string', 'max:45', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\-\.]+$/'],
+            'numero_taxi' => ['required', 'string', 'max:10', 'regex:/^[0-9]+$/', 'unique:taxis,numero_taxi,' . $id],
+        ], [
+            'marca.regex' => 'La marca solo puede contener letras, espacios, guiones y puntos.',
+            'modelo.regex' => 'El modelo solo puede contener letras, espacios, guiones y puntos.',
+            'numero_taxi.regex' => 'El número de taxi solo puede contener números.',
         ]);
 
         $user = auth()->user();
@@ -105,9 +113,9 @@ class TaxiController extends Controller
         }
 
         $taxi->update([
-            'marca' => $request->marca,
-            'modelo' => $request->modelo,
-            'numero_taxi' => $request->numero_taxi,
+            'marca' => strip_tags(trim($request->marca)),
+            'modelo' => strip_tags(trim($request->modelo)),
+            'numero_taxi' => trim($request->numero_taxi),
         ]);
 
         return redirect()->route('taxista.dashboard')->with('success', 'Taxi actualizado exitosamente');

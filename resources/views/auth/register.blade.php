@@ -7,73 +7,8 @@
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
 
-	<!-- Fuente -->
-	<link href="https://fonts.googleapis.com/css?family=Numans" rel="stylesheet">
-
-	<style>
-		/* Estilos personalizados */
-		html,body{
-			background-image: url('https://i.ytimg.com/vi/WJIcpzvf1hM/maxresdefault.jpg');
-			background-size: cover;
-			background-repeat: no-repeat;
-			height: 100%;
-			font-family: 'Numans', sans-serif;
-		}
-
-		.container{
-			height: 100%;
-			align-content: center;
-		}
-
-		.card {
-        margin: auto;
-        width: 600px;
-        max-height: 90vh; /* Limita la altura máxima */
-        overflow-y: auto; /* Activa el scroll si se desborda */
-        background-color: rgba(0,0,0,0.5) !important;
-        color: white;
-    }
-
-
-		.card-header h3{
-			color: white;
-		}
-
-		.input-group-prepend span{
-			width: 50px;
-			background-color: #FFC312;
-			color: black;
-			border: 0 !important;
-		}
-
-		input:focus {
-			outline: none !important;
-			box-shadow: none !important;
-		}
-
-		.login_btn {
-			color: black;
-			background-color: #FFC312;
-			width: 100%;
-		}
-
-		.login_btn:hover {
-			background-color: white;
-			color: black;
-		}
-
-		label {
-			color: #ccc;
-		}
-
-		.form-check-label {
-			color: #ccc;
-		}
-
-		small.text-danger {
-			color: #ff6b6b !important;
-		}
-	</style>
+	<!-- Estilos de autenticación -->
+	<link rel="stylesheet" href="{{ asset('css/auth.css') }}">
 </head>
 <body>
 <div class="container">

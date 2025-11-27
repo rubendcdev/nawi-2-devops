@@ -1,5 +1,10 @@
 @extends('layouts.app')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/common.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/perfil.css') }}">
+@endpush
+
 @section('content')
 <div class="container">
     <h2>Mi Perfil</h2>
