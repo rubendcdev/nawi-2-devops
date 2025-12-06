@@ -28,31 +28,6 @@ class ControllerTest extends TestCase
     }
 
     /**
-     * Test para HomeController::index
-     * Verifica que solo usuarios autenticados pueden acceder al dashboard
-     */
-    /* public function test_home_controller_index_authenticated()
-    {
-        // Crear usuario y autenticarse
-        $role = Role::create(['id' => Str::uuid()->toString(), 'nombre' => 'user']);
-        
-        $usuario = Usuario::create([
-            'id' => Str::uuid()->toString(),
-            'nombre' => 'John',
-            'apellido' => 'Doe',
-            'telefono' => '1234567890',
-            'email' => 'john@example.com',
-            'password' => Hash::make('password'),
-            'id_rol' => $role->id,
-        ]);
-
-        $response = $this->actingAs($usuario, 'web')->get('/home');
-
-        $response->assertStatus(200)
-                 ->assertViewIs('home');
-    } */
-
-    /**
      * Test para HomeController::index sin autenticación
      * Verifica que redirige a login si no está autenticado
      */
