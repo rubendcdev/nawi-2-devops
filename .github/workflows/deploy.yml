@@ -1,4 +1,4 @@
-name: Run Tests
+name: CI/CD Deploy
 
 on:
   push:
@@ -7,6 +7,7 @@ on:
     branches: [ main, developer ]
 
 jobs:
+
   test:
     runs-on: ubuntu-latest
 
@@ -43,3 +44,19 @@ jobs:
 
     - name: Run Tests
       run: php artisan test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: |
+          docker build -t laravel-app .
+
+      - name: Deploy using deploy.sh
+        run: |
+          chmod +x scripts/deploy.sh
+          ./scripts/deploy.sh
