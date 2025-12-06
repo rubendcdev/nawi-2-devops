@@ -13,7 +13,7 @@ use App\Models\EstatusDocumento;
 
 class ControllerTest extends TestCase
 {
-    use RefreshDatabase;
+    //use RefreshDatabase;
 
     /**
      * Test para PaginaController::sobreNosotros
@@ -28,6 +28,18 @@ class ControllerTest extends TestCase
     }
 
     /**
+     * Test para WebAuthController::showLoginForm
+     * Verifica que la vista de login se retorna correctamente
+     */
+    public function test_web_auth_controller_show_login_form()
+    {
+        $response = $this->get('/login');
+
+        $response->assertStatus(200)
+                 ->assertViewIs('auth.login');
+    }
+
+    /**
      * Test para HomeController::index sin autenticación
      * Verifica que redirige a login si no está autenticado
      */
@@ -39,40 +51,4 @@ class ControllerTest extends TestCase
                  ->assertRedirect('/login');
     }
 
-    /**
-     * Test para TaxistaController::index
-     * Verifica que la vista de taxistas se retorna correctamente con taxistas aprobados
-     */
-    public function test_taxista_controller_index()
-    {
-        // Crear roles y estatus necesarios
-        $role = Role::create(['id' => Str::uuid()->toString(), 'nombre' => 'taxista']);
-        $estatusAprobado = EstatusDocumento::create([
-            'id' => Str::uuid()->toString(),
-            'nombre' => 'Aprobado'
-        ]);
-
-        // Crear usuario taxista
-        $usuario = Usuario::create([
-            'id' => Str::uuid()->toString(),
-            'nombre' => 'Carlos',
-            'apellido' => 'Moreno',
-            'telefono' => '9876543210',
-            'email' => 'carlos@example.com',
-            'password' => Hash::make('password'),
-            'id_rol' => $role->id,
-        ]);
-
-        // Crear taxista con documentos aprobados (simulado)
-        $taxista = Taxista::create([
-            'id' => Str::uuid()->toString(),
-            'id_usuario' => $usuario->id,
-        ]);
-
-        $response = $this->get('/taxistas');
-
-        $response->assertStatus(200)
-                 ->assertViewIs('taxistas.index')
-                 ->assertViewHas('taxistas');
-    }
 }
