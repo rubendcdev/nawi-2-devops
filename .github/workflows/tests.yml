@@ -18,10 +18,10 @@ jobs:
       with:
         php-version: '8.3'
         tools: composer:v2
-        extensions: mbstring, bcmath, ctype, json, openssl
+        extensions: mbstring, bcmath, ctype, json, openssl, sqlite
 
-    - name: Copy .env
-      run: cp .env.example .env
+    - name: Copy .env.testing
+      run: cp .env.testing .env
 
     - name: Install dependencies
       run: composer install --no-interaction --prefer-dist --optimize-autoloader
