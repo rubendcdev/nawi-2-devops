@@ -18,16 +18,21 @@ jobs:
       with:
         php-version: '8.3'
         tools: composer:v2
-        extensions: mbstring, bcmath, ctype, json, openssl, sqlite
+        extensions: mbstring, bcmath, ctype, json, openssl
 
-    - name: Copy .env.testing
-      run: cp .env.testing .env
+    - name: Copy .env and set APP_KEY
+      run: |
+        cp .env.example .env
+        php artisan key:generate
 
     - name: Install dependencies
       run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
-    - name: Generate app key
-      run: php artisan key:generate
+    - name: Install Node dependencies
+      run: npm install
+
+    - name: Build assets
+      run: npm run build
 
     - name: Run Tests
       run: php artisan test
